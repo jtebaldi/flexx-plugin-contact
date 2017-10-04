@@ -92,12 +92,12 @@
                 </ul>
             </div>
             <div class="panel-body">
-                <div class="">
-                    <div class="form-group">
-                        <label for="railscf_mail_to"><%= t('.to', default: 'Email') %> <abbr title="required">*</abbr>:</label><br>
-                        <input id="railscf_mail_to" class="form-control required" type="text" name="railscf_mail[to]" value="<%= @form.the_settings[:railscf_mail][:to] rescue '' %>" />
-                    </div>
+              <div class="">
+                <div class="form-group">
+                  <%= f.label :auto_add_to_campaign, "#{t('.auto_add_to_campaign', default: 'Automatically add to campaign')}".html_safe, :class => ""  %><br>
+                  <%= f.text_field :auto_add_to_campaign, :class => "form-control", style: "" %>
                 </div>
+              </div>
             </div>
         </div>
 

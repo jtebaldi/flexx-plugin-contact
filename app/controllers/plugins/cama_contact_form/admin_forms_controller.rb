@@ -16,7 +16,7 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
 
   def update
     if @form.update(params.require(:plugins_cama_contact_form_cama_contact_form).permit(:name, :slug))
-      settings = {"railscf_mail" => params[:railscf_mail], "railscf_message" => params[:railscf_message], "railscf_form_button" => params[:railscf_form_button]}
+      settings = {"railscf_mail" => params[:railscf_mail], "railscf_message" => params[:railscf_message], "railscf_form_button" => params[:railscf_form_button], "railscf_campaign" => params[:railscf_campaign]}
       fields = []
       (params[:fields] || {}).each{|k, v|
         v[:field_options][:options] = v[:field_options][:options].values if v[:field_options][:options].present?
@@ -70,7 +70,7 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
     if response.present? && response.destroy
       flash[:notice] = "#{t('.actions.msg_deleted', default: 'The response has been deleted')}"
     end
-    redirect_to action: :responses
+    redirect_to request.referrer
   end
 
   def manual
