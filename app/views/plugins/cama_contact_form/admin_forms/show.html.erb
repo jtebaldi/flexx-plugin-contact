@@ -17,7 +17,7 @@
 
 					<dl>
 						<% @op_fields.each do |default| %>
-							<dt><%= default[:label] %></dt>
+							<dt><%= default[:label] %>:</dt>
 						  <dd>
 						  	<% cid = default[:cid].to_sym %>
 							  <% if default[:field_type] == "file" %>
