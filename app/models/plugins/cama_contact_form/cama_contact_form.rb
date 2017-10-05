@@ -20,6 +20,14 @@ class Plugins::CamaContactForm::CamaContactForm < ActiveRecord::Base
     @_the_fields[:fields]
   end
 
+  def parent
+    Plugins::CamaContactForm::CamaContactForm.find(parent_id) rescue nil
+  end
+
+  def campaign
+    Campaign.find(the_settings[:railscf_campaign][:campaign_id]) rescue nil
+  end
+
   def the_settings
     @_the_settings ||= JSON.parse(self.settings || '{}').with_indifferent_access
   end

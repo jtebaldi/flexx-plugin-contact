@@ -57,7 +57,7 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
 
   def leads
     add_breadcrumb I18n.t("plugins.cama_contact_form.leads", default: 'Leads')
-    @form = current_site.contact_forms.where({id: "1"}).first
+    @form = current_site.contact_forms.where({parent_id: nil}).first
     values = JSON.parse(@form.value).to_sym
     @op_fields = values[:fields].select{ |field| relevant_field? field }
     @forms = current_site.contact_forms.where.not({id: @form.id})
