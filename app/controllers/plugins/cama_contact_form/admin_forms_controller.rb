@@ -14,6 +14,14 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
     render "edit"
   end
 
+  def show
+    add_breadcrumb I18n.t("plugins.cama_contact_form.lead", default: 'Lead')
+    @form = current_site.contact_forms.find(params[:id])
+    values = JSON.parse(@form.parent.value).to_sym
+    @value = (JSON.parse(@form.settings).to_sym rescue @form.value)
+    @op_fields = values[:fields].select{ |field| relevant_field? field }
+  end
+
   def update
     if @form.update(params.require(:plugins_cama_contact_form_cama_contact_form).permit(:name, :slug))
       settings = {"railscf_mail" => params[:railscf_mail], "railscf_message" => params[:railscf_message], "railscf_form_button" => params[:railscf_form_button], "railscf_campaign" => params[:railscf_campaign]}
