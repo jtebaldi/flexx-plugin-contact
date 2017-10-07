@@ -26,7 +26,7 @@
                 <tr>
                 	<td data-label=""><%= value[:fields][form.parent.fields.select{|f| f[:label].to_s.downcase == "name"}.first[:cid].to_sym] rescue '' %></td>
                 	<td data-label=""><%= value[:fields][form.parent.fields.select{|f| f[:label].to_s.downcase == "email"}.first[:cid].to_sym] rescue '' %></td>
-                  <td data-label=""><%= form.parent.campaign.name rescue '' %></td>
+                  <td data-label=""><%= form.campaign.name rescue '' %></td>
                   <td data-label=""><%= value[:created_at] %></td>
                   <td data-label="">
                     <%= link_to "view", { action: :show, id: form.id }, class: "btn btn-info btn-xs" %>
