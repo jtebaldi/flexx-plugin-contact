@@ -19,6 +19,8 @@ Rails.application.routes.draw do
               get 'responses'
               get 'item_field', on: :collection
             end
+
+            resources :admin_campaigns
             get :leads, to: "admin_forms#leads"
           end
         end

@@ -1,0 +1,49 @@
+<div class="page-content-wrap" id="contact_form_answers">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Campaigns</h3>
+            <div class="box-tools pull-right">
+              <%= link_to new_admin_plugins_cama_contact_form_admin_campaign_path, class: "btn btn-default btn-sm" do %>
+              	<i class="fa fa-plus"></i> <%= t('.new_campaign', default: 'New Campaign') %>
+              <% end %>
+            </div>
+        </div>
+        <div class="box-body custom-tabe-responsive">
+          <table class="table">
+            <thead>
+            <tr>
+            	<th scope="col"><%= t('.contact_name', default: 'Name') %></th>
+              <th scope="col"><%= t('.created_at', default: 'Created') %></th>
+              <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody id="contact_form_body">
+            	<% @campaigns.each do |campaign| %>
+            			<td data-label=""><%= campaign.name %></td>
+                  <td data-label=""><%= campaign.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+                  <td data-label="">
+                    <%= link_to "view", { action: :show, id: campaign.id }, class: "btn btn-info btn-xs" %>
+                    <%= link_to "edit", { action: :edit, id: campaign.id }, class: "btn btn-success btn-xs" %>
+                    <%= link_to raw('<span class="text-danger" style="color:#fff">Delete</span>'),
+                                { action: :destroy, id: campaign.id },
+                                method: :delete, data: { confirm: t('.actions.confirm_delete', default: 'Are you sure?') },
+                                class: 'btn btn-danger btn-xs', title: t('.actions.delete', default: 'Delete') %>
+                  </td>
+                </tr>
+            <% end %>
+            </tbody>
+          </table>
+          <%= content_tag("div", raw("#{t('camaleon_cms.admin.message.data_found_list', default: 'No items found')}"), class: "alert alert-warning") if @campaigns.empty? %>
+            <%= raw cama_do_pagination(@campaigns) %>
+        </div>
+        <script>
+          $( document ).ready(function() {
+            $("#contact_form_body tr:not(:first-child) td:first-child").attr("scope","row");
+          })
+        </script>
+      </div>
+		</div>
+	</div>
+</div>

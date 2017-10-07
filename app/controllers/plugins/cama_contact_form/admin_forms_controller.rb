@@ -69,7 +69,6 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
     @forms = @forms.paginate(:page => params[:page], :per_page => current_site.admin_per_page)
   end
 
-
   def del_response
     response = current_site.contact_forms.find_by_id(params[:response_id])
     if response.present? && response.destroy

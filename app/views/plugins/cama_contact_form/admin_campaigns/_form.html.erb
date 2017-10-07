@@ -1,0 +1,18 @@
+<%= form_for @campaign, url:{action: @campaign.new_record? ? :create : :update}, html:{class: 'validate-forms cama_ajax_request'} do |f| %>
+    <input id="plugins_contact_form_models_contact_form_site_id" type="hidden" name="plugins_contact_form_models_contact_form[site_id]" value="<%= current_site.id %>" />
+    <%= f.hidden_field :id  %>
+    <div class="panel-body">
+        <div class="form-group">
+          <%= f.label t('.name', default: 'Title') %><br>
+          <%= f.text_field :name, :class => "form-control required" %>
+        </div>
+        <div class="form-group">
+          <%= f.label t('.description', default: 'Description') %><br>
+          <%= f.text_area :description, :class => "form-control", :rows => 4 %>
+        </div>
+    </div>
+
+    <div class="panel-footer">
+      <button class="btn btn-primary pull-right" type="submit"><%= @campaign.new_record? ? t('.submit_btn', default: 'Create Campaign') : t('.submit_btn', default: 'Save Campaign')%></button>
+    </div>
+<% end %>
