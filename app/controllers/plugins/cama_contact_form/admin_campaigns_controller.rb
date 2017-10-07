@@ -2,15 +2,15 @@ class Plugins::CamaContactForm::AdminCampaignsController < CamaleonCms::Apps::Pl
 	add_breadcrumb I18n.t("plugins.cama_contact_form.title", default: 'Campaign'), :admin_plugins_cama_contact_form_admin_campaigns_path
 	before_action :set_campaign, only: ['show','edit','update','destroy']
 	def index
-		@campaigns = Campaign.order("updated_at desc").page(params[:page])
+		@campaigns = current_site.campaigns.order("updated_at desc").page(params[:page])
 	end
 
 	def new
-		@campaign = Campaign.new
+		@campaign = current_site.campaigns.new
 	end
 
 	def create
-		@campaign = Campaign.new(campaign_params)
+		@campaign = current_site.campaigns.new(campaign_params)
 		if @campaign.save
 			flash[:notice] = "#{t('.created', default: 'Created successfully')}"
 			redirect_to action: :index
@@ -43,7 +43,7 @@ class Plugins::CamaContactForm::AdminCampaignsController < CamaleonCms::Apps::Pl
 	private
 	def set_campaign
 		begin
-      @campaign = Campaign.find_by_id(params[:id])
+      @campaign = current_site.campaigns.find_by_id(params[:id])
     rescue
       flash[:error] = "Error form class"
       redirect_to cama_admin_path
@@ -51,6 +51,6 @@ class Plugins::CamaContactForm::AdminCampaignsController < CamaleonCms::Apps::Pl
 	end
 
 	def campaign_params
-		params.require(:campaign).permit(:name, :description)
+		params.require(:plugins_cama_contact_form_cama_campaign).permit(:name, :description)
 	end
 end

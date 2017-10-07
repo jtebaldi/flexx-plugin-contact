@@ -3,7 +3,7 @@ class CreateCampaigns < ActiveRecord::Migration
     create_table :campaigns do |t|
       t.string :name
       t.string :description
-
+      t.integer :site_id
       t.timestamps
     end
   end
