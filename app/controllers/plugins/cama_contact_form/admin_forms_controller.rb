@@ -1,7 +1,7 @@
 class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::PluginsAdminController
   include Plugins::CamaContactForm::MainHelper
   include Plugins::CamaContactForm::ContactFormControllerConcern
-  before_action :set_form, only: ['show','edit','update','destroy']
+  before_action :set_form, only: ['show','edit','update','destroy', :change_campaign, :update_campaign]
   add_breadcrumb I18n.t("plugins.cama_contact_form.title", default: 'Contact Form'), :admin_plugins_cama_contact_form_admin_forms_path, except: [:leads]
 
   def index
@@ -82,6 +82,13 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
 
   end
 
+  def change_campaign
+  end
+
+  def update_campaign
+    @form.update_attributes(form_campaign_params)
+  end
+
   def item_field
     render partial: 'item_field', locals:{ field_type: params[:kind], cid: params[:cid] }
   end
@@ -95,5 +102,9 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
       flash[:error] = "Error form class"
       redirect_to cama_admin_path
     end
+  end
+
+  def form_campaign_params
+    params.require(:plugins_cama_contact_form_cama_contact_form).permit(:campaign_id)
   end
 end

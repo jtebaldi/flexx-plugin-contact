@@ -18,6 +18,10 @@ Rails.application.routes.draw do
               delete 'del_response'
               get 'responses'
               get 'item_field', on: :collection
+              member do
+                get :change_campaign
+                put :update_campaign
+              end
             end
 
             resources :admin_campaigns
