@@ -25,6 +25,8 @@ Rails.application.routes.draw do
             end
 
             resources :admin_campaigns
+            resources :admin_goals
+            resources :admin_templates
             get :leads, to: "admin_forms#leads"
           end
         end

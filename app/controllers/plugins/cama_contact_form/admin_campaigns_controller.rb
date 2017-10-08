@@ -51,6 +51,6 @@ class Plugins::CamaContactForm::AdminCampaignsController < CamaleonCms::Apps::Pl
 	end
 
 	def campaign_params
-		params.require(:plugins_cama_contact_form_cama_campaign).permit(:name, :description)
+		params.require(:plugins_cama_contact_form_cama_campaign).permit(:name, :description, campaign_steps_attributes: [:id, :time_frame, :time_select, :action_needed, :template_id, :_destroy])
 	end
 end
