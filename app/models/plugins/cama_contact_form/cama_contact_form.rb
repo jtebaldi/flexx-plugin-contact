@@ -25,7 +25,7 @@ class Plugins::CamaContactForm::CamaContactForm < ActiveRecord::Base
   end
 
   def campaign
-    Plugins::CamaContactForm::CamaCampaign.find(the_settings[:campaign_id]) rescue nil
+    Plugins::CamaContactForm::CamaCampaign.find(campaign_id) rescue nil
   end
 
   def the_settings
