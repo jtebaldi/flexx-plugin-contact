@@ -1,4 +1,4 @@
-<%= form_for @template, url:{action: @template.new_record? ? :create : :update}, html:{class: 'validate-forms cama_ajax_request'} do |f| %>
+<%= form_for template, url:{action: template.new_record? ? :create : :update}, html:{id: "form-template",class: 'validate-forms cama_ajax_request'} do |f| %>
     <input id="plugins_contact_form_models_contact_form_site_id" type="hidden" name="plugins_contact_form_models_contact_form[site_id]" value="<%= current_site.id %>" />
     <%= f.hidden_field :id  %>
     <div class="panel-body">
@@ -6,9 +6,25 @@
           <%= f.label t('.name', default: 'Name') %><br>
           <%= f.text_field :name, :class => "form-control required" %>
         </div>
+        <div class="form-group">
+          <%= f.label t('.content', default: 'Upload File') %><br>
+          <% if template.new_record? %>
+            <%= f.file_field :tmp_content, :class => "form-control required" %>
+          <% else %>
+            <%= f.text_area :content, :class => "form-control tinymce_textarea required translatable", :style => "width: 100%" %>
+            <script type="text/javascript">
+              $(document).ready(function(){
+                tinymce.init(cama_get_tinymce_settings({
+                    selector: '.tinymce_textarea',
+                    height: '480px'
+                }));
+              });
+            </script>
+          <% end %>
+        </div>
     </div>
 
     <div class="panel-footer">
-      <button class="btn btn-primary pull-right" type="submit"><%= @template.new_record? ? t('.submit_btn', default: 'Create template') : t('.submit_btn', default: 'Save template')%></button>
+      <button class="btn btn-primary pull-right" type="submit"><%= template.new_record? ? t('.submit_btn', default: 'Create template') : t('.submit_btn', default: 'Save template')%></button>
     </div>
 <% end %>
