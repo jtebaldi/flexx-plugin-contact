@@ -1,11 +1,11 @@
 <div class="row fieldset">
   <div class="col-md-4">
     <label>Timeframe</label><br/>
-    After <%= f.text_field :time_frame, size: 5 %> <%= f.select :time_select, options_for_select(["days", "weeks", "months"], f.object.time_select) %>
+    After <%= f.text_field :time_frame, size: 5 %> <%= f.select :time_select, options_for_select(["hours","days", "weeks", "months"], f.object.time_select) %>
   </div>
   <div class="col-md-4">
     <label>Action</label><br/>
-    <%= f.select :action_needed, options_for_select(["Send email", "Send text", "Notify Admin"], f.object.action_needed) %>
+    <%= f.select :action_needed, options_for_select(["Send email", "Send text", "Notify admin"], f.object.action_needed) %>
   </div>
   <div class="col-md-3">
     <label>Template</label><br/>

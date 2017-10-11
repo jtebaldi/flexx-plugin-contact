@@ -1,5 +1,5 @@
 class Plugins::CamaContactForm::AdminTemplatesController < CamaleonCms::Apps::PluginsAdminController
-	add_breadcrumb I18n.t("plugins.cama_contact_form.title", default: 'template'), :admin_plugins_cama_contact_form_admin_templates_path
+	add_breadcrumb I18n.t("plugins.cama_contact_form.title", default: 'Templates'), :admin_plugins_cama_contact_form_admin_templates_path
 	before_action :set_template, only: ['show','edit','update','destroy']
 	def index
 		@templates = current_site.templates.order("updated_at desc").page(params[:page])
