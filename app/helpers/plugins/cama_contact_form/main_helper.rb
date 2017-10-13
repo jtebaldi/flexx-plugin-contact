@@ -63,7 +63,7 @@ module Plugins::CamaContactForm::MainHelper
   end
 
   def add_nested_javascript
-    append_asset_libraries({"cama_contact_form"=> { coffee: [plugin_asset_path("campaigns")] }})
+    append_asset_libraries({"cama_contact_form"=> { coffee: [plugin_asset_path("campaigns"),plugin_asset_path("plugin")] }})
   end
 
   def contact_form_admin_before_load
