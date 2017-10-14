@@ -11,8 +11,9 @@ class CamaCampaignMailer < ApplicationMailer
     mail to: contact_email, subject: subject
   end
 
-  def notify_admin(content)
+  def notify_admin(content, subject)
   	@content = content
-  	mail to: "admin@example.com", subject: "Contact Campaign Notification"
+    admin = CamaleonCms::User.where(role: "admin").first
+  	mail to: admin.email, subject: "Contact Campaign Notification"
   end
 end
