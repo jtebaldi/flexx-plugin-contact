@@ -33,16 +33,6 @@ class Plugins::CamaContactForm::AdminTemplatesController < CamaleonCms::Apps::Pl
 	end
 
 	def update
-		file_data = template_params[:tmp_content]
-		if file_data.present?
-			if file_data.respond_to?(:read)
-			  @template.content = file_data.read
-			elsif file_data.respond_to?(:path)
-			  @template.content = File.read(file_data.path)
-			else
-			  logger.error "Bad file_data: #{file_data.class.name}: #{file_data.inspect}"
-			end
-		end
 		if @template.update_attributes(template_params)
 			flash[:notice] = "#{t('.created', default: 'Updated successfully')}"
 			redirect_to action: :index
@@ -71,6 +61,6 @@ class Plugins::CamaContactForm::AdminTemplatesController < CamaleonCms::Apps::Pl
 	end
 
 	def template_params
-		params.require(:plugins_cama_contact_form_cama_template).permit(:name, :tmp_content)
+		params.require(:plugins_cama_contact_form_cama_template).permit(:name, :tmp_content, :content)
 	end
 end

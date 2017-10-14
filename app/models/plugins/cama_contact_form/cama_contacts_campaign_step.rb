@@ -13,7 +13,7 @@ class Plugins::CamaContactForm::CamaContactsCampaignStep < ActiveRecord::Base
 				# Send email to contact
 				value = (JSON.parse(contact.settings).to_sym rescue contact.value)
 				email = value[:fields][contact.parent.fields.select{|f| f[:label].to_s.downcase == "email"}.first[:cid].to_sym]
-				CamaCampaignMailer.send_content(email, step.template).deliver
+				CamaCampaignMailer.send_content(email, step.template.get_content(contact, value), step.template.name).deliver
 			elsif step.action_needed == "Send text"
 				# Send text to contact
 			elsif step.action_needed == "Notify admin"

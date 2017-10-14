@@ -5,10 +5,10 @@ class CamaCampaignMailer < ApplicationMailer
   #
   #   en.cama_campaign_mailer.send_content.subject
   #
-  def send_content(contact_email, template)
-    @content = template.content
+  def send_content(contact_email, content, subject)
+    @content = content
 
-    mail to: contact_email, subject: template.name
+    mail to: contact_email, subject: subject
   end
 
   def notify_admin(content)
