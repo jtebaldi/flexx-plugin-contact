@@ -15,6 +15,7 @@
             <thead>
             <tr>
             	<th scope="col"><%= t('.contact_name', default: 'Name') %></th>
+              <th scope="col"><%= t('.created_at', default: 'Active Leads') %></th>
               <th scope="col"><%= t('.created_at', default: 'Created') %></th>
               <th scope="col"></th>
             </tr>
@@ -22,6 +23,7 @@
             <tbody id="contact_form_body">
             	<% @campaigns.each do |campaign| %>
             			<td data-label=""><%= campaign.name %></td>
+                  <td data-label=""><%= campaign.active_leads_number %></td>
                   <td data-label=""><%= campaign.created_at.strftime("%Y-%m-%d %H:%M") %></td>
                   <td data-label="">
                     <%= link_to "view", { action: :show, id: campaign.id }, class: "btn btn-info btn-xs" %>
