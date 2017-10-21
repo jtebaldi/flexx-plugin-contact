@@ -12,6 +12,11 @@
           <%= render "campaign_step_fields", f: campaign_step %>
         <% end %>
         <%= link_to_add_fields raw("<i class='fa fa-plus'></i> New Step"), f, :campaign_steps %>
+
+        <div class="form-group">
+          <%= f.label t('.goal', default: 'Goal') %><br>
+          <%= f.select :goal_id, options_for_select(current_site.goals.all.collect{|t| [t.name, t.id]}, f.object.goal_id), :class => "form-control required" %>
+        </div>
     </div>
 
     <div class="panel-footer">

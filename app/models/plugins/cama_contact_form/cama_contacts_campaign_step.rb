@@ -15,13 +15,13 @@ class Plugins::CamaContactForm::CamaContactsCampaignStep < ActiveRecord::Base
 		if step
 			if step.action_needed == "Send email"
 				# Send email to contact
-				CamaCampaignMailer.send_content(contact_email, step.template.get_content(contact, value), step.template.name).deliver
+				CamaCampaignMailer.send_content(contact_email, step.template.get_content(contact, value), step.template.name, self.id).deliver
 			elsif step.action_needed == "Send text"
 				# Send text to contact
 				send_message(contact, contact_name, contact_email)
 			elsif step.action_needed == "Notify admin"
 				# Notify admin
-				CamaCampaignMailer.notify_admin(step.template.get_content(contact, value), step.template.name).deliver
+				CamaCampaignMailer.notify_admin(step.template.get_content(contact, value), step.template.name, self.id).deliver
 			end	
 		end
 	end
