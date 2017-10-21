@@ -16,6 +16,7 @@
             <tr>
             	<th scope="col"><%= t('.contact_name', default: 'Name') %></th>
               <th scope="col"><%= t('.created_at', default: 'Created') %></th>
+              <th scope="col">Success</th>
               <th scope="col"></th>
             </tr>
             </thead>
@@ -23,6 +24,7 @@
             	<% @goals.each do |goal| %>
             			<td data-label=""><%= goal.name %></td>
                   <td data-label=""><%= goal.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+                  <td data-label=""><%= goal.successful_campaigns_number rescue 0 %></td>
                   <td data-label="">
                     <%= link_to "edit", { action: :edit, id: goal.id }, class: "btn btn-success btn-xs" %>
                     <%= link_to raw('<span class="text-danger" style="color:#fff">Delete</span>'),
