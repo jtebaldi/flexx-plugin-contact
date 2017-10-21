@@ -55,7 +55,14 @@ class Plugins::CamaContactForm::AdminCampaignsController < CamaleonCms::Apps::Pl
 	end
 
 	def twilio_callback
-		
+		begin
+      @text_event = Plugins::CamaContactForm::CamaContactsCampaignStep.find params["campaign_step_id"]
+      @text_event.status = params["SmsStatus"].to_s.titleize
+      @text_event.save
+    rescue Exception => e
+      Rails.logger.info "Text Tracking error: #{e}"
+    end
+		render text: "ok"
 	end
 
 	private
