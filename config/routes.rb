@@ -14,8 +14,8 @@ Rails.application.routes.draw do
       scope :admin, as: 'admin', path: PluginRoutes.system_info['admin_path_name'] do
         namespace 'plugins' do
           namespace 'cama_contact_form' do
-            match :mailgun_callback, to: "admin_campaigns#mailgun_callback", as: :mailgun_callback, via: [:get, :post]
-            match "twilio_callback/:campaign_step_id", to: "admin_campaigns#twilio_callback", as: :twilio_callback, via: [:get, :post]
+            post :mailgun_callback, to: "admin_campaigns#mailgun_callback", as: :mailgun_callback
+            post "twilio_callback/:campaign_step_id", to: "admin_campaigns#twilio_callback", as: :twilio_callback
             resources :admin_forms  do
               delete 'del_response'
               get 'responses'
