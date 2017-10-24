@@ -1,6 +1,7 @@
 class Plugins::CamaContactForm::AdminCampaignsController < CamaleonCms::Apps::PluginsAdminController
 	add_breadcrumb I18n.t("plugins.cama_contact_form.title", default: 'Campaign'), :admin_plugins_cama_contact_form_admin_campaigns_path
 	before_action :set_campaign, only: ['show','edit','update','destroy']
+	skip_before_filter :cama_site_check_existence, only: [:mailgun_callback, :twilio_callback]
 	skip_before_filter :cama_authenticate, only: [:mailgun_callback, :twilio_callback]
 	skip_before_filter :verify_authenticity_token, only: [:mailgun_callback, :twilio_callback]
 	def index
