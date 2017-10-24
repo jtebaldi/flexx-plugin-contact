@@ -1,9 +1,5 @@
 desc "Check campaign"
-task :cama_contact_form_campaigns do
-  # Task goes here
- 	# Plugins::CamaContactForm::CamaCampaign.all.each do |campaign|
- 	# 	puts "#{campaign.name}"
-	# end
+task :cama_contact_form_campaigns => :environment do
 	Plugins::CamaContactForm::CamaContactForm.where.not(:parent_id => nil).each do |contact|
 		# puts "#{contact.parent.name} #{contact.created_at}"
 		campaign = contact.campaign
