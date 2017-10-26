@@ -7,6 +7,10 @@
           <%= f.text_field :name, :class => "form-control required" %>
         </div>
         <div class="form-group">
+          <%= f.label t('.is_public', default: 'Available to other sites?') %><br>
+          <%= f.select :is_public, [["Yes",true], ["No", false]], :class => "form-control required" %>
+        </div>
+        <div class="form-group">
           <%= f.label t('.content', default: 'Upload File') %><br>
           <% if template.new_record? %>
             <%= f.file_field :tmp_content, :class => "form-control required" %>

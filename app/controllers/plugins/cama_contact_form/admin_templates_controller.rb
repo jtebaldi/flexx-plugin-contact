@@ -61,6 +61,6 @@ class Plugins::CamaContactForm::AdminTemplatesController < CamaleonCms::Apps::Pl
 	end
 
 	def template_params
-		params.require(:plugins_cama_contact_form_cama_template).permit(:name, :tmp_content, :content)
+		params.require(:plugins_cama_contact_form_cama_template).permit(:name, :tmp_content, :content, :is_public)
 	end
 end

@@ -9,7 +9,7 @@
   </div>
   <div class="col-md-3">
     <label>Template</label><br/>
-    <%= f.select :template_id, options_for_select(current_site.templates.all.collect{|t| [t.name, t.id]}, f.object.template_id) %>
+    <%= f.select :template_id, options_for_select(Plugins::CamaContactForm::CamaTemplate.where("templates.site_id = '#{current_site.id}' OR is_public = true ").collect{|t| [t.name, t.id]}, f.object.template_id) %>
   </div>
   <div class="col-md-1">
     <%= f.hidden_field :_destroy %>
