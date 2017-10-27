@@ -1,6 +1,6 @@
 <div class="page-content-wrap" id="contact_form_answers">
   <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-6">
       <div class="box box-primary">
         <div class="box-header with-border">
             <h3 class="box-title">Campaigns</h3>
@@ -47,5 +47,44 @@
         </script>
       </div>
 		</div>
+    <div class="col-md-6">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Goals</h3>
+            <div class="box-tools pull-right">
+              <%= link_to new_admin_plugins_cama_contact_form_admin_goal_path, class: "btn btn-default btn-sm" do %>
+                <i class="fa fa-plus"></i> <%= t('.new_goal', default: 'New Goal') %>
+              <% end %>
+            </div>
+        </div>
+        <div class="box-body custom-tabe-responsive">
+          <table class="table">
+            <thead>
+            <tr>
+              <th scope="col"><%= t('.contact_name', default: 'Name') %></th>
+              <th scope="col"><%= t('.created_at', default: 'Created') %></th>
+              <th scope="col">Success</th>
+              <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody id="contact_form_body">
+              <% @goals.each do |goal| %>
+                  <td data-label=""><%= goal.name %></td>
+                  <td data-label=""><%= goal.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+                  <td data-label=""><%= goal.successful_campaigns_number rescue 0 %></td>
+                  <td data-label="">
+                    <%= link_to "edit", edit_admin_plugins_cama_contact_form_admin_goal_path(goal), class: "btn btn-success btn-xs" %>
+                    <%= link_to raw('<span class="text-danger" style="color:#fff">Delete</span>'),
+                                admin_plugins_cama_contact_form_admin_goal_path(goal),
+                                method: :delete, data: { confirm: t('.actions.confirm_delete', default: 'Are you sure?') },
+                                class: 'btn btn-danger btn-xs', title: t('.actions.delete', default: 'Delete') %>
+                  </td>
+                </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 	</div>
 </div>

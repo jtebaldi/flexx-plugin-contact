@@ -6,6 +6,7 @@ class Plugins::CamaContactForm::AdminCampaignsController < CamaleonCms::Apps::Pl
 	skip_before_filter :verify_authenticity_token, only: [:mailgun_callback, :twilio_callback]
 	def index
 		@campaigns = current_site.campaigns.order("updated_at desc").page(params[:page])
+		@goals = current_site.goals.order("updated_at desc")
 	end
 
 	def new

@@ -13,7 +13,7 @@ class Plugins::CamaContactForm::AdminGoalsController < CamaleonCms::Apps::Plugin
 		@goal = current_site.goals.new(goal_params)
 		if @goal.save
 			flash[:notice] = "#{t('.created', default: 'Created successfully')}"
-			redirect_to action: :index
+			redirect_to admin_plugins_cama_contact_form_admin_campaigns_path
 		else
 			render :new
 		end
@@ -25,7 +25,7 @@ class Plugins::CamaContactForm::AdminGoalsController < CamaleonCms::Apps::Plugin
 	def update
 		if @goal.update_attributes(goal_params)
 			flash[:notice] = "#{t('.created', default: 'Updated successfully')}"
-			redirect_to action: :index
+			redirect_to admin_plugins_cama_contact_form_admin_campaigns_path
 		else
 			render :edit
 		end
@@ -37,7 +37,7 @@ class Plugins::CamaContactForm::AdminGoalsController < CamaleonCms::Apps::Plugin
 	def destroy
 		@goal.destroy
 		flash[:notice] = "#{t('.created', default: 'Deleted successfully')}"
-		redirect_to action: :index
+		redirect_to admin_plugins_cama_contact_form_admin_campaigns_path
 	end
 
 	private
