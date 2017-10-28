@@ -23,6 +23,8 @@ Rails.application.routes.draw do
               member do
                 get :change_campaign
                 put :update_campaign
+                get :end_campaign
+                put :update_end_campaign
               end
             end
 

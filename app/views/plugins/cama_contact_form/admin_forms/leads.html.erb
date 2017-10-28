@@ -16,6 +16,7 @@
             	<th scope="col"><%= t('.contact_name', default: 'Name') %></th>
             	<th scope="col"><%= t('.contact_email', default: 'Email') %></th>
               <th scope="col"><%= t('.campaign', default: 'Campaign') %></th>
+              <th scope="col"><%= t('.campaign_status', default: 'campaign status') %></th>
               <th scope="col"><%= t('.created_at', default: 'Initial contact') %></th>
               <th scope="col"></th>
             </tr>
@@ -27,6 +28,15 @@
                 	<td data-label=""><%= value[:fields][form.parent.fields.select{|f| f[:label].to_s.downcase == "name"}.first[:cid].to_sym] rescue '' %></td>
                 	<td data-label=""><%= value[:fields][form.parent.fields.select{|f| f[:label].to_s.downcase == "email"}.first[:cid].to_sym] rescue '' %></td>
                   <td data-label=""><span id="form_campaign_<%= form.id %>"><%= form.campaign.name rescue '' %></span> <%= link_to "change", { action: :change_campaign, id: form.id }, class: "btn btn-xs btn-info", remote: true %></td>
+                  <td data-label="">
+                    <span id="form_campaign_status_<%= form.id %>">
+                      <% if form.campaign_ended %>
+                        <%= render "plugins/cama_contact_form/admin_forms/campaign_status", form: form %>
+                      <% else %>
+                        <%= link_to "end campaign", { action: :end_campaign, id: form.id }, class: "btn btn-warning btn-xs", remote: true %>
+                      <% end %>
+                    </span>
+                  </td>
                   <td data-label=""><%= value[:created_at] %></td>
                   <td data-label="">
                     <%= link_to "view", { action: :show, id: form.id }, class: "btn btn-info btn-xs" %>
