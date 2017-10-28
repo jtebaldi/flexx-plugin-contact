@@ -3,6 +3,7 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
   include Plugins::CamaContactForm::ContactFormControllerConcern
   before_action :set_form, only: ['show','edit','update','destroy', :change_campaign, :update_campaign, :end_campaign, :update_end_campaign]
   add_breadcrumb I18n.t("plugins.cama_contact_form.title", default: 'Contact Form'), :admin_plugins_cama_contact_form_admin_forms_path, except: [:leads]
+  helper_method :sort_column, :sort_direction
 
   def index
     @forms = current_site.contact_forms.where("parent_id is null").all
@@ -66,14 +67,14 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
   def leads
     add_breadcrumb I18n.t("plugins.cama_contact_form.title", default: 'Leads'), :admin_plugins_cama_contact_form_admin_forms_path
     add_breadcrumb I18n.t("plugins.cama_contact_form.leads", default: 'Prospects')
-    @forms = current_site.contact_forms.where.not({parent_id: nil})
+    @forms = current_site.contact_forms.includes([:campaign, :parent]).where.not({parent_id: nil})
     if params[:contact_form_id].present?
       @forms = @forms.where(parent_id: params[:contact_form_id])
     end
     if params[:campaign_id].present?
       @forms = @forms.where(campaign_id: params[:campaign_id])
     end
-    @forms = @forms.paginate(:page => params[:page], :per_page => current_site.admin_per_page)
+    @forms = @forms.order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => current_site.admin_per_page)
   end
 
   def del_response
@@ -119,5 +120,15 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
 
   def form_campaign_params
     params.require(:plugins_cama_contact_form_cama_contact_form).permit(:campaign_id, :campaign_status, :campaign_ended)
+  end
+
+  # sort column, default is filename
+  def sort_column
+    params[:sort] || "created_at"
+  end
+  
+  # sort direction
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ? params[:direction] : "desc"
   end
 end

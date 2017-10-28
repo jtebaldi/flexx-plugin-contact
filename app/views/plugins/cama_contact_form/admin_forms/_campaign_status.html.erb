@@ -1,1 +1,1 @@
-<%= form.campaign.present? ? form.campaign_status : "" %> <%= link_to "change", { action: :end_campaign, id: form.id }, class: "btn btn-xs btn-info", remote: true %>
+<%= link_to (form.campaign.present? ? form.campaign_status : ""), { action: :end_campaign, id: form.id }, class: "btn btn-xs btn-#{Plugins::CamaContactForm::CamaContactForm.campaign_status_list[form.campaign_status.downcase.to_sym]}", remote: true %>
