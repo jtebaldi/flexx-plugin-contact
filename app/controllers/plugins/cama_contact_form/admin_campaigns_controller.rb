@@ -50,6 +50,12 @@ class Plugins::CamaContactForm::AdminCampaignsController < CamaleonCms::Apps::Pl
       @email_event = Plugins::CamaContactForm::CamaContactsCampaignStep.find params["campaign_step_id"]
       @email_event.status = params[:event].to_s.titleize
       @email_event.save
+      if params[:event].to_s == "unsubscribed"
+      	@contact_form = @email_event.contacts_campaign.contact_form
+      	@contact_form.campaign_ended = true
+      	@contact_form.campaign_status = "Unsubscribed"
+      	@contact_form.save
+      end
     rescue Exception => e
       Rails.logger.info "Email Tracking error: #{e}"
     end
