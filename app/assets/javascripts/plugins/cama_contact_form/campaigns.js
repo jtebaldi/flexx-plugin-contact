@@ -5,6 +5,10 @@ jQuery(function() {
     return event.preventDefault();
   });
 
+  $('.leads_filter').on('change', function(){
+    $('#leads_filter_form').submit();
+  });
+
   return $('form').on('click', '.add_fields', function(event) {
     const time = new Date().getTime();
     const regexp = new RegExp($(this).data('id'), 'g');

@@ -67,6 +67,12 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
     add_breadcrumb I18n.t("plugins.cama_contact_form.title", default: 'Leads'), :admin_plugins_cama_contact_form_admin_forms_path
     add_breadcrumb I18n.t("plugins.cama_contact_form.leads", default: 'Prospects')
     @forms = current_site.contact_forms.where.not({parent_id: nil})
+    if params[:contact_form_id].present?
+      @forms = @forms.where(parent_id: params[:contact_form_id])
+    end
+    if params[:campaign_id].present?
+      @forms = @forms.where(campaign_id: params[:campaign_id])
+    end
     @forms = @forms.paginate(:page => params[:page], :per_page => current_site.admin_per_page)
   end
 

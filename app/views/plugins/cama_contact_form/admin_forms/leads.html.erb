@@ -4,17 +4,35 @@
       <!-- START BASIC TABLE SAMPLE -->
       <div class="box box-primary">
         <div class="box-header with-border">
-            <h3 class="box-title">Responses</h3>
+            <h3 class="box-title">Leads</h3>
             <div class="box-tools pull-right">
               <a class="btn btn-box-action" href="<%= url_for action: :index %>"><%= t('.back_btn', default: 'Back') %></a>
             </div>
         </div>
         <div class="box-body custom-tabe-responsive">
+          <%= form_tag admin_plugins_cama_contact_form_leads_path, method: :get, id: "leads_filter_form" do |f| %>
+            <div class="row">
+              <div class="col-md-6 col-xs-12">
+                <div class="field">
+                  <%= label_tag "Filter by Form" %><br />
+                  <%= select_tag :contact_form_id, options_for_select(current_site.contact_forms.where(parent_id: nil).order(:name).pluck(:name, :id), params[:contact_form_id]), include_blank: "all", class: "leads_filter"  %>
+                </div>
+              </div>
+              <div class="col-md-6 col-xs-12">
+                <div class="field">
+                  <%= label_tag "Filter by Campaign" %><br />
+                  <%= select_tag :campaign_id, options_for_select(current_site.campaigns.order(:name).collect {|a| [a.name, a.id]}, params[:campaign_id]), include_blank: "all", class: "leads_filter" %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+          <br/>
           <table class="table">
             <thead>
             <tr>
             	<th scope="col"><%= t('.contact_name', default: 'Name') %></th>
             	<th scope="col"><%= t('.contact_email', default: 'Email') %></th>
+              <th scope="col"><%= t('.contact_email', default: 'Contact Form') %></th>
               <th scope="col"><%= t('.campaign', default: 'Campaign') %></th>
               <th scope="col"><%= t('.campaign_status', default: 'campaign status') %></th>
               <th scope="col"><%= t('.created_at', default: 'Initial contact') %></th>
@@ -25,8 +43,9 @@
             <% @forms.each do |form| %>
                 <% value = (JSON.parse(form.settings).to_sym rescue form.value) %>
                 <tr>
-                	<td data-label=""><%= value[:fields][form.parent.fields.select{|f| f[:label].to_s.downcase == "name"}.first[:cid].to_sym] rescue '' %></td>
+                	<td data-label=""><%= link_to((value[:fields][form.parent.fields.select{|f| f[:label].to_s.downcase == "name"}.first[:cid].to_sym] rescue ''), { action: :show, id: form.id }) %></td>
                 	<td data-label=""><%= value[:fields][form.parent.fields.select{|f| f[:label].to_s.downcase == "email"}.first[:cid].to_sym] rescue '' %></td>
+                  <td data-label=""><%= form.parent.name rescue ''%></td>
                   <td data-label=""><span id="form_campaign_<%= form.id %>"><%= form.campaign.name rescue '' %></span> <%= link_to "change", { action: :change_campaign, id: form.id }, class: "btn btn-xs btn-info", remote: true %></td>
                   <td data-label="">
                     <span id="form_campaign_status_<%= form.id %>">
