@@ -3,7 +3,7 @@ task :cama_contact_form_campaigns => :environment do
 	Plugins::CamaContactForm::CamaContactForm.where.not(:parent_id => nil).each do |contact|
 		# puts "#{contact.parent.name} #{contact.created_at}"
 		campaign = contact.campaign
-		if campaign.present?
+		if campaign.present? && contact.campaign_ended == false
 			value = (JSON.parse(contact.settings).to_sym rescue contact.value)
 			email = value[:fields][contact.parent.fields.select{|f| f[:label].to_s.downcase == "email"}.first[:cid].to_sym]
 			puts "#{email} #{contact.created_at} #{contact.campaign.name}"
