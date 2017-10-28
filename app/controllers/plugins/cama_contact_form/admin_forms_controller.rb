@@ -1,7 +1,7 @@
 class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::PluginsAdminController
   include Plugins::CamaContactForm::MainHelper
   include Plugins::CamaContactForm::ContactFormControllerConcern
-  before_action :set_form, only: ['show','edit','update','destroy', :change_campaign, :update_campaign, :end_campaign, :update_end_campaign]
+  before_action :set_form, only: ['show','edit','update','destroy', :change_campaign, :update_campaign, :end_campaign, :update_end_campaign, :save_fields]
   add_breadcrumb I18n.t("plugins.cama_contact_form.title", default: 'Contact Form'), :admin_plugins_cama_contact_form_admin_forms_path, except: [:leads]
   helper_method :sort_column, :sort_direction
 
@@ -99,6 +99,12 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
     @form.update_attributes(form_campaign_params)
   end
 
+  def save_fields
+    @form.settings = JSON.parse(@form.settings).merge(params[:plugins_contact_form][:value]) {|key, oldval, newval| newval }.to_json
+    @form.save
+    redirect_to action: :show
+  end
+
   def update_campaign
     @form.update_attributes(form_campaign_params)
   end
@@ -120,6 +126,10 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
 
   def form_campaign_params
     params.require(:plugins_cama_contact_form_cama_contact_form).permit(:campaign_id, :campaign_status, :campaign_ended)
+  end
+
+  def form_fields_params
+    # params.require(:plugins_contact_form).permit(:value)
   end
 
   # sort column, default is filename

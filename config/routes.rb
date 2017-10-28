@@ -25,6 +25,7 @@ Rails.application.routes.draw do
                 put :update_campaign
                 get :end_campaign
                 put :update_end_campaign
+                put :save_fields
               end
             end
 

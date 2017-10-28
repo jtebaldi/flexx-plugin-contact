@@ -14,24 +14,28 @@
             </div>
         </div>
         <div class="panel-body">
-
 					<dl>
-						<% @op_fields.each do |default| %>
-							<dt><%= default[:label] %>:</dt>
-						  <dd>
-						  	<% cid = default[:cid].to_sym %>
-							  <% if default[:field_type] == "file" %>
-							      <%# flatten is necessary for backwards compatibility: ["file"].flatten == [["file]].flatten %>
-							      <% [@value[:fields][cid]].flatten.each do |file| %>
-							          <%= link_to file.split('/').last, file, target: '_blank' %><br>
-							      <% end %>
-							  <% elsif default[:field_type] == "radio" || default[:field_type] == "checkboxes" %>
-							      <%= @value[:fields][cid].map { |f| f.to_s.translate }.join(', ') if @value[:fields][cid].present? %></td>
-							  <% else %>
-							      <%= @value[:fields][cid] %>
-							  <% end %>
-						  </dd>
-					  <% end %>
+						<%= form_for @form, url: save_fields_admin_plugins_cama_contact_form_admin_form_path(@form), method: :put do |f| %>
+							<% @op_fields.each do |default| %>
+								<div class="form-group">
+                  <%= f.label default[:label] %><br>
+                  <% cid = default[:cid].to_sym %>
+								  <% if default[:field_type] == "file" %>
+								      <%# flatten is necessary for backwards compatibility: ["file"].flatten == [["file]].flatten %>
+								      <% [@value[:fields][cid]].flatten.each do |file| %>
+								          <%= link_to file.split('/').last, file, target: '_blank' %><br>
+								      <% end %>
+								  <% elsif default[:field_type] == "radio" || default[:field_type] == "checkboxes" %>
+								      <%= @value[:fields][cid].map { |f| f.to_s.translate }.join(', ') if @value[:fields][cid].present? %></td>
+								  <% else %>
+								      <%#= @value[:fields][cid] %>
+								      <%= text_field_tag "plugins_contact_form[value][fields][#{cid}]", @value[:fields][cid], class: "form-control required" %>
+								  <% end %>
+                </div>
+						  <% end %>
+						  <br/>
+						  <%= f.submit "Save Fields", class: "btn btn-success" %>
+						 <% end %>
 					</dl>
 				</div>
 			</div>
