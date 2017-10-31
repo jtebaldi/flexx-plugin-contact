@@ -26,8 +26,8 @@
                   <td data-label=""><%= campaign.active_leads_number %></td>
                   <td data-label=""><%= campaign.created_at.strftime("%Y-%m-%d %H:%M") %></td>
                   <td data-label="">
-                    <%= link_to "view", { action: :show, id: campaign.id }, class: "btn btn-info btn-xs" %>
-                    <%= link_to "edit", { action: :edit, id: campaign.id }, class: "btn btn-success btn-xs" %>
+                    <%= link_to "View", { action: :show, id: campaign.id }, class: "btn btn-info btn-xs" %>
+                    <%= link_to "Edit", { action: :edit, id: campaign.id }, class: "btn btn-success btn-xs" %>
                     <%= link_to raw('<span class="text-danger" style="color:#fff">Delete</span>'),
                                 { action: :destroy, id: campaign.id },
                                 method: :delete, data: { confirm: t('.actions.confirm_delete', default: 'Are you sure?') },
@@ -73,7 +73,7 @@
                   <td data-label=""><%= goal.created_at.strftime("%Y-%m-%d %H:%M") %></td>
                   <td data-label=""><%= goal.successful_campaigns_number rescue 0 %></td>
                   <td data-label="">
-                    <%= link_to "edit", edit_admin_plugins_cama_contact_form_admin_goal_path(goal), class: "btn btn-success btn-xs" %>
+                    <%= link_to "Edit", edit_admin_plugins_cama_contact_form_admin_goal_path(goal), class: "btn btn-success btn-xs" %>
                     <%= link_to raw('<span class="text-danger" style="color:#fff">Delete</span>'),
                                 admin_plugins_cama_contact_form_admin_goal_path(goal),
                                 method: :delete, data: { confirm: t('.actions.confirm_delete', default: 'Are you sure?') },
