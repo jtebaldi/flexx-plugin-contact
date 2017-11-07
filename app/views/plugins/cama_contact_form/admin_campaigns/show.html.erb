@@ -15,15 +15,18 @@
         </div>
         <div class="panel-body">
 					<dl>
-						<dt>Name:</dt>
-					  <dd>
-					  	<%= @campaign.name %>
-					  </dd>
-					  <dt>Description:</dt>
-					  <dd>
-					  	<%= @campaign.description %>
-					  </dd>
-
+  					<dt>Name:</dt>
+  				  <dd><%= @campaign.name %></dd>
+  				  <dt>Description:</dt>
+  				  <dd><%= @campaign.description %></dd>
+            <dt>Active Leads:</dt>
+            <dd><%= @campaign.active_leads_number %></dd>
+            <dt>Opened:</dt>
+            <dd><%= @campaign.open_count %></dd>
+            <dt>Clicked:</dt>
+            <dd><%= @campaign.click_count %></dd>
+            <dt>Unsubscribed:</dt>
+            <dd><%= @campaign.unsubscribe_count %></dd>
 					</dl>
 				</div>
 			</div>
