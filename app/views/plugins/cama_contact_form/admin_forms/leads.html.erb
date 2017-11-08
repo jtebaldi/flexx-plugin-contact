@@ -38,8 +38,10 @@
                 <th><%= t('.contact_name', default: 'Name') %></th>
                 <th><%= t('.contact_email', default: 'Email') %></th>
                 <th><%= sortable "parents_plugins_contact_forms.name", t('.contact_email', default: 'Contact Form') %></th>
-                <th><%= sortable "campaigns.name", t('.campaign', default: 'Campaign') %></th>
-                <th><%= t('.campaign_status', default: 'campaign status') %></th>
+                <% if can?(:manage, :campaigns) %>
+                  <th><%= sortable "campaigns.name", t('.campaign', default: 'Campaign') %></th>
+                  <th><%= t('.campaign_status', default: 'campaign status') %></th>
+                <% end %>
                 <th><%= sortable "plugins_contact_forms.created_at", t('.created_at', default: 'Initial contact') %></th>
                 <th></th>
               </tr>
@@ -51,16 +53,18 @@
                   <td data-label=""><%= link_to(contact_name(form, value), { action: :show, id: form.id }) %></td>
                   <td data-label=""><%= value[:fields][form.parent.fields.select{|f| f[:label].to_s.downcase == "email"}.first[:cid].to_sym] rescue '' %></td>
                   <td data-label=""><%= form.parent.name rescue ''%></td>
-                  <td data-label=""><span id="form_campaign_<%= form.id %>"><%= form.campaign.name rescue '' %></span> <%= link_to raw('<i class="fa fa-pencil"></i>'), { action: :change_campaign, id: form.id }, class: "btn btn-xs btn-info", remote: true %></td>
-                  <td data-label="">
-                    <span id="form_campaign_status_<%= form.id %>">
-                      <% if form.campaign_ended %>
-                        <%= render "plugins/cama_contact_form/admin_forms/campaign_status", form: form %>
-                      <% else %>
-                        <%= link_to "Active", { action: :end_campaign, id: form.id }, class: "btn btn-success btn-xs", remote: true %>
-                      <% end %>
-                    </span>
-                  </td>
+                  <% if can?(:manage, :campaigns) %>
+                    <td data-label=""><span id="form_campaign_<%= form.id %>"><%= form.campaign.name rescue '' %></span> <%= link_to raw('<i class="fa fa-pencil"></i>'), { action: :change_campaign, id: form.id }, class: "btn btn-xs btn-info", remote: true %></td>
+                    <td data-label="">
+                      <span id="form_campaign_status_<%= form.id %>">
+                        <% if form.campaign_ended %>
+                          <%= render "plugins/cama_contact_form/admin_forms/campaign_status", form: form %>
+                        <% else %>
+                          <%= link_to "Active", { action: :end_campaign, id: form.id }, class: "btn btn-success btn-xs", remote: true %>
+                        <% end %>
+                      </span>
+                    </td>
+                  <% end %>
                   <td data-label=""><%= form.created_at %></td>
                   <td data-label="">
                     <%= link_to raw('<i class="fa fa-eye"></i>'), { action: :show, id: form.id }, class: "btn btn-info btn-xs" %>

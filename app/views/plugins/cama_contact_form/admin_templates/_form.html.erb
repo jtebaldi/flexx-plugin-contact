@@ -20,7 +20,85 @@
               $(document).ready(function(){
                 tinymce.init(cama_get_tinymce_settings({
                     selector: '.tinymce_textarea',
-                    height: '480px'
+                    height: '480px',
+                    menubar: "edit insert view format table tools",
+                    toolbar: "bold italic | alignleft aligncenter alignright alignjustify | fontselect fontsizeselect | bullist numlist | outdent indent | undo redo | link unlink image media | forecolor backcolor | styleselect template | contact_forms "+tinymce_global_settings["custom_toolbar"].join(","),
+                    setup: function (editor) {
+                        editor.addButton('contact_forms', {
+                          type: 'menubutton',
+                          text: 'Contact Form',
+                          icon: false,
+                          menu: [
+                          {
+                            text: 'Contact Name',
+                            onclick: function() {
+                              editor.plugins.variable.addVariable('contact_name');
+                            }
+                          }, 
+                          {
+                            text: 'Contact Email',
+                            onclick: function() {
+                              editor.plugins.variable.addVariable('contact_email');
+                            }
+                          }, {
+                            text: 'Site Email',
+                            onclick: function() {
+                              editor.plugins.variable.addVariable('site_email');
+                            }
+                          }, {
+                            text: 'Site Phone',
+                            onclick: function() {
+                              editor.plugins.variable.addVariable('site_phone');
+                            }
+                          }, {
+                            text: 'Site Address',
+                            onclick: function() {
+                              editor.plugins.variable.addVariable('site_address');
+                            }
+                          }, {
+                            text: 'Site Logo',
+                            onclick: function() {
+                              editor.plugins.variable.addVariable('site_logo');
+                            }
+                          }]
+                        });
+
+                        editor.on('blur', function () {
+                            tinymce.triggerSave();
+                            $('textarea#'+editor.id).trigger('change');
+                        });
+
+                        editor.addMenuItem('append_line', {
+                            text: 'New line at the end',
+                            context: 'insert',
+                            onclick: function () { editor.dom.add(editor.getBody(), 'p', {}, '-New line-');  }
+                        });
+
+                        editor.addMenuItem('add_line', {
+                            text: 'New line',
+                            context: 'insert',
+                            onclick: function () { editor.insertContent('<p>-New line-</p>');  }
+                        });
+
+                        editor.addMenuItem('add_contact_name', {
+                            text: 'Contact Name',
+                            context: 'campagin',
+                            onclick: function () { editor.insertContent('<p>-New line-</p>');  }
+                        });
+
+                        // eval all extra setups
+                        for(var ff in tinymce_global_settings["setups"]) tinymce_global_settings["setups"][ff](editor);
+
+                        editor.on('postRender', function(e) {
+                            editor.settings.onPostRender(editor);
+                            // eval all extra setups
+                            for(var ff in tinymce_global_settings["post_render"]) tinymce_global_settings["post_render"][ff](editor);
+                        });
+
+                        editor.on('init', function(e) {
+                            for(var ff in tinymce_global_settings["init"]) tinymce_global_settings["init"][ff](editor);
+                        });
+                    },
                 }));
               });
             </script>
