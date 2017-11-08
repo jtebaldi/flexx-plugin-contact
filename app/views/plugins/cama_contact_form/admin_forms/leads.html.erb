@@ -48,8 +48,8 @@
             <% @forms.each do |form| %>
                 <% value = (JSON.parse(form.settings).to_sym rescue form.value) %>
                 <tr>
-                    <td data-label=""><%= link_to((value[:fields][form.parent.fields.select{|f| f[:label].to_s.downcase == "name"}.first[:cid].to_sym] rescue ''), { action: :show, id: form.id }) %></td>
-                    <td data-label=""><%= value[:fields][form.parent.fields.select{|f| f[:label].to_s.downcase == "email"}.first[:cid].to_sym] rescue '' %></td>
+                  <td data-label=""><%= link_to(contact_name(form, value), { action: :show, id: form.id }) %></td>
+                  <td data-label=""><%= value[:fields][form.parent.fields.select{|f| f[:label].to_s.downcase == "email"}.first[:cid].to_sym] rescue '' %></td>
                   <td data-label=""><%= form.parent.name rescue ''%></td>
                   <td data-label=""><span id="form_campaign_<%= form.id %>"><%= form.campaign.name rescue '' %></span> <%= link_to raw('<i class="fa fa-pencil"></i>'), { action: :change_campaign, id: form.id }, class: "btn btn-xs btn-info", remote: true %></td>
                   <td data-label="">

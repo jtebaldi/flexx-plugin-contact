@@ -6,6 +6,20 @@ module Plugins::CamaContactForm::MainHelper
     link_to title, {:sort => column, :direction => direction}, {:class => css_class}
   end
 
+  def contact_name(contact_form, value)
+    begin
+      if contact_form.parent.fields.select{|f| f[:label].to_s.downcase == "name"}.first.present?
+        return value[:fields][contact_form.parent.fields.select{|f| f[:label].to_s.downcase == "name"}.first[:cid].to_sym]
+      else
+        first_name = value[:fields][contact_form.parent.fields.select{|f| f[:label].to_s.downcase.gsub(" ", "_") == "first_name"}.first[:cid].to_sym]
+        last_name = value[:fields][contact_form.parent.fields.select{|f| f[:label].to_s.downcase.gsub(" ", "_") == "last_name"}.first[:cid].to_sym]
+        return first_name + " " + last_name
+      end
+    rescue
+      ""
+    end
+  end
+
   def link_to_add_fields(name, f, association)
     new_object = f.object.send(association).klass.new
     id = new_object.object_id
