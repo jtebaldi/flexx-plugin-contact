@@ -56,7 +56,7 @@ class Plugins::CamaContactForm::AdminCampaignsController < CamaleonCms::Apps::Pl
       	@contact_form.campaign_status = "Unsubscribed"
       	@contact_form.save
       end
-      @campaign = @contact_form.contacts_campaign.campaign
+      @campaign = @email_event.contacts_campaign.campaign
       if params[:event].to_s == "unsubscribed"
       	@campaign.unsubscribe_count += 1
       elsif params[:event].to_s == "opened"

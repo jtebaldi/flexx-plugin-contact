@@ -15,7 +15,7 @@ class Plugins::CamaContactForm::CamaContactsCampaignStep < ActiveRecord::Base
 		if step
 			if step.action_needed == "Send email"
 				# Send email to contact
-				CamaCampaignMailer.send_content(contact_email, step.template.get_content(contact, value), step.template.name, self.id).deliver_now
+				CamaCampaignMailer.send_content(contact_email, step.template.get_content(contact, value), step.template.name, self.id).deliver
 			elsif step.action_needed == "Send text"
 				# Send text to contact
 				send_message(contact, contact_name, contact_email)
