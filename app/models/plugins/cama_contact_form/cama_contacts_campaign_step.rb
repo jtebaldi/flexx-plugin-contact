@@ -1,5 +1,6 @@
 require 'twilio-ruby'
 class Plugins::CamaContactForm::CamaContactsCampaignStep < ActiveRecord::Base
+	include Plugins::CamaContactForm::MainHelper
 	self.table_name = "contacts_campaign_steps"
 	belongs_to :contacts_campaign, class_name: "Plugins::CamaContactForm::CamaContactsCampaign"
 	belongs_to :step, class_name: "Plugins::CamaContactForm::CamaCampaignStep"
@@ -11,7 +12,7 @@ class Plugins::CamaContactForm::CamaContactsCampaignStep < ActiveRecord::Base
 		contact = contacts_campaign.contact_form
 		value = (JSON.parse(contact.settings).to_sym rescue contact.value)
 		contact_email = value[:fields][contact.parent.fields.select{|f| f[:label].to_s.downcase == "email"}.first[:cid].to_sym]
-		contact_name = value[:fields][contact.parent.fields.select{|f| f[:label].to_s.downcase == "name"}.first[:cid].to_sym]
+		contact_name = contact_name(contact, value)
 		if step
 			if step.action_needed == "Send email"
 				# Send email to contact
