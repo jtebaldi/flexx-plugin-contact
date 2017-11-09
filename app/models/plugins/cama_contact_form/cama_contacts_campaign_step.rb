@@ -12,7 +12,7 @@ class Plugins::CamaContactForm::CamaContactsCampaignStep < ActiveRecord::Base
 		contact = contacts_campaign.contact_form
 		value = (JSON.parse(contact.settings).to_sym rescue contact.value)
 		contact_email = value[:fields][contact.parent.fields.select{|f| f[:label].to_s.downcase == "email"}.first[:cid].to_sym]
-		contact_name = contact_name(contact, value)
+		contact_name = contact_name(contact, value) rescue ""
 		if step
 			if step.action_needed == "Send email"
 				# Send email to contact
