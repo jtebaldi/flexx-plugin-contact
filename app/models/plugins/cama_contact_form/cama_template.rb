@@ -1,4 +1,5 @@
 class Plugins::CamaContactForm::CamaTemplate < ActiveRecord::Base
+	include Plugins::CamaContactForm::MainHelper
 	self.table_name = 'templates'
 	belongs_to :site, class_name: "CamaleonCms::Site"
 
@@ -8,7 +9,7 @@ class Plugins::CamaContactForm::CamaTemplate < ActiveRecord::Base
 		current_site = site
 		current_theme = site.get_theme
 		email = value[:fields][contact.parent.fields.select{|f| f[:label].to_s.downcase == "email"}.first[:cid].to_sym]
-		name = value[:fields][contact.parent.fields.select{|f| f[:label].to_s.downcase == "name"}.first[:cid].to_sym]
+		name = contact_name(contact, value) rescue ""
 		begin
 			content.gsub!("{{contact_name}}", name.titleize)
 		rescue
