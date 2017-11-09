@@ -23,7 +23,7 @@ class Plugins::CamaContactForm::CamaTemplate < ActiveRecord::Base
 		rescue
 		end
 		begin
-			content.gsub!("{{site_email}}", (current_theme.get_field_value('business_email') rescue ""))
+			content.gsub!("{{site_email}}", (site.get_option("email_from") rescue ""))
 		rescue
 		end
 		begin

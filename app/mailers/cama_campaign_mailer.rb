@@ -7,9 +7,12 @@ class CamaCampaignMailer < ApplicationMailer
   #   en.cama_campaign_mailer.send_content.subject
   #
   def send_content(contact_email, content, subject, campaign_step_id)
+    step = Plugins::CamaContactForm::CamaContactsCampaignStep.find(campaign_step_id)
+    campaign = step.contacts_campaign.campaign
+    site = campaign.site
     @content = content
     admin = CamaleonCms::User.where(role: "admin").first
-    mail to: contact_email, subject: subject, "X-Mailgun-Variables" => { campaign_step_id: campaign_step_id }.to_json
+    mail from: site.get_option('email_from'),to: contact_email, subject: subject, "X-Mailgun-Variables" => { campaign_step_id: campaign_step_id }.to_json
   end
 
   def notify_admin(content, subject, campaign_step_id)
