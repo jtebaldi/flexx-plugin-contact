@@ -26,6 +26,17 @@
                 }));
               });
             </script>
+            <div class="form-group admin_logo_upload">
+              <label for=""><%= t('camaleon_cms.admin.templates.attachment') %></label><br>
+              <%= f.text_field :file_upload, readonly: true, :class => "form-control unput_upload", "data-label" => "#{t('camaleon_cms.admin.button.upload_attachment')}" %>
+            </div>
+            <script>
+              jQuery(function () {
+                  var panel = $("#form-template");
+                  panel.validate();
+                  panel.find('.unput_upload, .input_upload').input_upload({type: 'pdf'});
+              });
+          </script>
           <% end %>
         </div>
     </div>
