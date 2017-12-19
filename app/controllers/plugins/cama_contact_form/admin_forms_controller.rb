@@ -106,7 +106,11 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
   end
 
   def update_campaign
-    @form.update_attributes(form_campaign_params)
+    @form.assign_attributes(form_campaign_params)
+    if @form.campaign_id_changed?
+      @form.created_at = Time.zone.now
+    end
+    @form.save
   end
 
   def item_field
