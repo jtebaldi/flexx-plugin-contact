@@ -28,9 +28,9 @@ class Plugins::CamaContactForm::FrontController < CamaleonCms::Apps::PluginsFron
   private
 
   def verify_google_captcha
-    if params["g-recaptcha-response"]
-      unless GoogleCaptchaValidator.validate(params["g-recaptcha-response"])
-        flash[:contact_form][:error] = "Invalid captcha! Please, try again."
+    if params.key?("g-recaptcha-response")
+      unless params["g-recaptcha-response"].present? && GoogleCaptchaValidator.validate(params["g-recaptcha-response"])
+        flash[:contact_form] = { error: "Invalid captcha! Please, try again." }
         params[:format] == 'json' ? render(json: flash.discard(:contact_form).to_hash) : (redirect_to :back)
       end
     end

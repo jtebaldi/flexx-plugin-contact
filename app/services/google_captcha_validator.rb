@@ -1,7 +1,6 @@
-class GoogleCaptchaValidator
-  include HTTParty
-  base_uri "https://www.google.com"
+require "httparty"
 
+class GoogleCaptchaValidator
   GOOGLE_CAPTCHA_SECRET_KEY = ENV["GOOGLE_CAPTCHA_SECRET_KEY"]
 
   def self.validate(g_recaptcha_response)
@@ -12,7 +11,7 @@ class GoogleCaptchaValidator
       }
     }
 
-    result = post("/recaptcha/api/siteverify", options)
+    result = ::HTTParty.post("https://www.google.com/recaptcha/api/siteverify", options)
     result["success"]
   end
 end
