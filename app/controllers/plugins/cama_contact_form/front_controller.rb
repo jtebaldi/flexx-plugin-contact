@@ -1,7 +1,9 @@
 class Plugins::CamaContactForm::FrontController < CamaleonCms::Apps::PluginsFrontController
   include Plugins::CamaContactForm::MainHelper
   include Plugins::CamaContactForm::ContactFormControllerConcern
-  
+
+  before_action :verify_google_captcha, only: [:save_form]
+
   # here add your custom functions
   def save_form
     flash[:contact_form] = {}
@@ -21,6 +23,17 @@ class Plugins::CamaContactForm::FrontController < CamaleonCms::Apps::PluginsFron
       end
     end
     params[:format] == 'json' ? render(json: flash.discard(:contact_form).to_hash) : (redirect_to :back)
+  end
+
+  private
+
+  def verify_google_captcha
+    if params.key?("g-recaptcha-response")
+      unless params["g-recaptcha-response"].present? && GoogleCaptchaValidator.validate(params["g-recaptcha-response"])
+        flash[:contact_form] = { error: "Invalid captcha! Please, try again." }
+        params[:format] == 'json' ? render(json: flash.discard(:contact_form).to_hash) : (redirect_to :back)
+      end
+    end
   end
 
 end
