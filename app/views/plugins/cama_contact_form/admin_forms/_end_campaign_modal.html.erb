@@ -1,0 +1,20 @@
+<div id="modal-blurred-bg" class="modal fade modal-blur" tabindex="-1" role="dialog" style="display: none;">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">×</button>
+				<h4 class="modal-title">End Campaign</h4>
+			</div>
+			<div class="modal-body">
+				<%= form_for form, url: update_end_campaign_admin_plugins_cama_contact_form_admin_form_path(form), method: :put, remote: true do |f| %>
+					<div class="form-group">
+            <label for="railscf_campaign_campaign_id"><%= t('.select_campaign', default: 'Select campaign status') %></label><br/>
+              <%= f.select :campaign_status, options_for_select(["Active", "Completed", "Cancelled", "Unsubscribed"], form.campaign_status), class: 'form-control translatable', include_blank: false %>
+              <%= f.hidden_field :campaign_ended, value: true %>
+          </div>
+					<%= f.submit "End Campaign", class: "btn btn-primary" %>
+				<% end %>
+			</div>
+		</div> <!-- / .modal-content -->
+	</div> <!-- / .modal-dialog -->
+</div> <!-- / .modal -->

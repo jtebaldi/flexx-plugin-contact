@@ -1,4 +1,34 @@
 module Plugins::CamaContactForm::MainHelper
+  def sortable(column, title = nil)
+    title ||= column.titleize
+    css_class = column == sort_column ? "current #{sort_direction}" : nil
+    direction = column == sort_column && sort_direction == "asc" ? "desc" : "asc"
+    link_to title, {:sort => column, :direction => direction}, {:class => css_class}
+  end
+
+  def contact_name(contact_form, value)
+    begin
+      if contact_form.parent.fields.select{|f| f[:label].to_s.downcase == "name"}.first.present?
+        return value[:fields][contact_form.parent.fields.select{|f| f[:label].to_s.downcase == "name"}.first[:cid].to_sym]
+      else
+        first_name = value[:fields][contact_form.parent.fields.select{|f| f[:label].to_s.downcase.gsub(" ", "_") == "first_name"}.first[:cid].to_sym]
+        last_name = value[:fields][contact_form.parent.fields.select{|f| f[:label].to_s.downcase.gsub(" ", "_") == "last_name"}.first[:cid].to_sym]
+        return first_name + " " + last_name
+      end
+    rescue
+      ""
+    end
+  end
+
+  def link_to_add_fields(name, f, association)
+    new_object = f.object.send(association).klass.new
+    id = new_object.object_id
+    fields = f.fields_for(association, new_object, child_index: id) do |builder|
+      render(association.to_s.singularize + "_fields", f: builder)
+    end
+    link_to(name, '#', class: "btn btn-sm btn-info add_fields", data: {id: id, fields: fields.gsub("\n", "")})
+  end
+
   def self.included(klass)
     klass.helper_method [:cama_form_element_bootstrap_object, :cama_form_shortcode] rescue "" # here your methods accessible from views
   end
@@ -53,8 +83,21 @@ module Plugins::CamaContactForm::MainHelper
 
   end
 
+  def add_nested_javascript
+    append_asset_libraries({"cama_contact_form"=> { js: [plugin_asset_path("campaigns.js")], css: [plugin_asset_path("styles.css")] }})
+  end
+
   def contact_form_admin_before_load
     admin_menu_append_menu_item("settings", {icon: "envelope-o", title: t('plugins.cama_contact_form.title', default: 'Contact Form'), url: admin_plugins_cama_contact_form_admin_forms_path, datas: "data-intro='This plugin permit you to create you contact forms with desired fields and paste your short_code in any content.' data-position='right'"})
+    if can?(:manage, :leads)
+      admin_menu_insert_menu_after("dashboard", "leads", {icon: "podcast", title: t('plugins.cama_contact_form.title', default: 'Leads'), url: admin_plugins_cama_contact_form_leads_path, datas: "data-intro='Show all leads from contact forms' data-position='right'"})
+    end
+    if can?(:manage, :campaigns)
+      admin_menu_insert_menu_after("leads", "campaigns", {icon: "check", title: t('plugins.cama_contact_form.title', default: 'Campaigns'), url: admin_plugins_cama_contact_form_admin_campaigns_path, datas: "data-intro='Show all leads from contact forms' data-position='right'"})
+    end
+    if can?(:manage, :templates)
+      admin_menu_insert_menu_after("campaigns", "templates", {icon: "copy", title: t('plugins.cama_contact_form.title', default: 'Templates'), url: admin_plugins_cama_contact_form_admin_templates_path, datas: "data-intro='Show all leads from contact forms' data-position='right'"})
+    end
   end
 
   def contact_form_app_before_load

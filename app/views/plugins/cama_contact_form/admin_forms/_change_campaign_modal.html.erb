@@ -1,0 +1,19 @@
+<div id="modal-blurred-bg" class="modal fade modal-blur" tabindex="-1" role="dialog" style="display: none;">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">×</button>
+				<h4 class="modal-title">Change Campaign</h4>
+			</div>
+			<div class="modal-body">
+				<%= form_for form, url: update_campaign_admin_plugins_cama_contact_form_admin_form_path(form), method: :put, remote: true do |f| %>
+					<div class="form-group">
+            <label for="railscf_campaign_campaign_id"><%= t('.select_campaign', default: 'Select campaign') %></label><br/>
+              <%= f.select :campaign_id, options_for_select(current_site.campaigns.collect {|a| [a.name, a.id]}, form.campaign_id), class: 'form-control translatable', include_blank: true %>
+          </div>
+					<%= f.submit "Save", class: "btn btn-primary" %>
+				<% end %>
+			</div>
+		</div> <!-- / .modal-content -->
+	</div> <!-- / .modal-dialog -->
+</div> <!-- / .modal -->

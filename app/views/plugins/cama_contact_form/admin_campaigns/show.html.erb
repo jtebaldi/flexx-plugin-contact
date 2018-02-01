@@ -1,0 +1,35 @@
+<div class="page-content-wrap" id="contact_form_answers">
+  <div class="row">
+    <div class="col-md-12">
+      <!-- START BASIC TABLE SAMPLE -->
+      <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-md-6">
+                    <h3 class="panel-title"><span class="fa fa-archive"></span> <%= t('.lead_record', default: 'Campaign') %></h3>
+                </div>
+                <div class="col-md-6 text-right">
+                    <a class="btn btn-default" href="<%= url_for action: :index %>"><%= t('.back_btn', default: 'Back') %></a>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+					<dl>
+  					<dt>Name:</dt>
+  				  <dd><%= @campaign.name %></dd>
+  				  <dt>Description:</dt>
+  				  <dd><%= @campaign.description %></dd>
+            <dt>Active Leads:</dt>
+            <dd><%= @campaign.active_leads_number %></dd>
+            <dt>Opened:</dt>
+            <dd><%= @campaign.open_count %></dd>
+            <dt>Clicked:</dt>
+            <dd><%= @campaign.click_count %></dd>
+            <dt>Unsubscribed:</dt>
+            <dd><%= @campaign.unsubscribe_count %></dd>
+					</dl>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

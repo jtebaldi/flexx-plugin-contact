@@ -1,0 +1,47 @@
+<%= form_for template, url:{action: template.new_record? ? :create : :update}, html:{id: "form-template",class: 'validate-forms cama_ajax_request'} do |f| %>
+    <input id="plugins_contact_form_models_contact_form_site_id" type="hidden" name="plugins_contact_form_models_contact_form[site_id]" value="<%= current_site.id %>" />
+    <%= f.hidden_field :id  %>
+    <div class="panel-body">
+        <div class="form-group">
+          <%= f.label t('.name', default: 'Name') %><br>
+          <%= f.text_field :name, :class => "form-control required" %>
+        </div>
+        <div class="form-group">
+          <%= f.label t('.is_public', default: 'Available to other sites?') %><br>
+          <%= f.select :is_public, [["Yes",true], ["No", false]], :class => "form-control required" %>
+        </div>
+        <div class="form-group">
+          <%= f.label t('.content', default: 'Upload File') %><br>
+          <% if template.new_record? %>
+            <%= f.file_field :tmp_content, :class => "form-control required" %>
+          <% else %>
+            <%= f.text_area :content, :class => "form-control tinymce_textarea required translatable", :style => "width: 100%" %>
+            <script type="text/javascript">
+              $(document).ready(function(){
+                tinymce.init(cama_get_tinymce_settings({
+                    selector: '.tinymce_textarea',
+                    height: '480px',
+                    menubar: "edit insert view format table tools",
+                    toolbar: "bold italic | alignleft aligncenter alignright alignjustify | fontselect fontsizeselect | bullist numlist | outdent indent | undo redo | link unlink image media | forecolor backcolor | styleselect template | contact_forms "+tinymce_global_settings["custom_toolbar"].join(","),
+                }));
+              });
+            </script>
+            <div class="form-group admin_logo_upload">
+              <label for=""><%= t('camaleon_cms.admin.templates.attachment') %></label><br>
+              <%= f.text_field :file_upload, readonly: true, :class => "form-control unput_upload", "data-label" => "#{t('camaleon_cms.admin.button.upload_attachment')}" %>
+            </div>
+            <script>
+              jQuery(function () {
+                  var panel = $("#form-template");
+                  panel.validate();
+                  panel.find('.unput_upload, .input_upload').input_upload({type: 'pdf'});
+              });
+          </script>
+          <% end %>
+        </div>
+    </div>
+
+    <div class="panel-footer">
+      <button class="btn btn-primary pull-right" type="submit"><%= template.new_record? ? t('.submit_btn', default: 'Create template') : t('.submit_btn', default: 'Save template')%></button>
+    </div>
+<% end %>

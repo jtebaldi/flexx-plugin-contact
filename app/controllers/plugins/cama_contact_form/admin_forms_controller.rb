@@ -1,8 +1,9 @@
 class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::PluginsAdminController
   include Plugins::CamaContactForm::MainHelper
   include Plugins::CamaContactForm::ContactFormControllerConcern
-  before_action :set_form, only: ['show','edit','update','destroy']
-  add_breadcrumb I18n.t("plugins.cama_contact_form.title", default: 'Contact Form'), :admin_plugins_cama_contact_form_admin_forms_path
+  before_action :set_form, only: ['show','edit','update','destroy', :change_campaign, :update_campaign, :end_campaign, :update_end_campaign, :save_fields]
+  add_breadcrumb I18n.t("plugins.cama_contact_form.title", default: 'Contact Form'), :admin_plugins_cama_contact_form_admin_forms_path, except: [:leads]
+  helper_method :sort_column, :sort_direction
 
   def index
     @forms = current_site.contact_forms.where("parent_id is null").all
@@ -14,9 +15,17 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
     render "edit"
   end
 
+  def show
+    add_breadcrumb I18n.t("plugins.cama_contact_form.lead", default: 'Lead')
+    @form = current_site.contact_forms.find(params[:id])
+    values = JSON.parse(@form.parent.value).to_sym
+    @value = (JSON.parse(@form.settings).to_sym rescue @form.value)
+    @op_fields = values[:fields].select{ |field| relevant_field? field }
+  end
+
   def update
     if @form.update(params.require(:plugins_cama_contact_form_cama_contact_form).permit(:name, :slug))
-      settings = {"railscf_mail" => params[:railscf_mail], "railscf_message" => params[:railscf_message], "railscf_form_button" => params[:railscf_form_button]}
+      settings = {"railscf_mail" => params[:railscf_mail], "railscf_message" => params[:railscf_message], "railscf_form_button" => params[:railscf_form_button], "railscf_campaign" => params[:railscf_campaign]}
       fields = []
       (params[:fields] || {}).each{|k, v|
         v[:field_options][:options] = v[:field_options][:options].values if v[:field_options][:options].present?
@@ -55,16 +64,53 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
     @forms = @forms.paginate(:page => params[:page], :per_page => current_site.admin_per_page)
   end
 
+  def leads
+    add_breadcrumb I18n.t("plugins.cama_contact_form.title", default: 'Leads'), :admin_plugins_cama_contact_form_admin_forms_path
+    add_breadcrumb I18n.t("plugins.cama_contact_form.leads", default: 'Prospects')
+    @forms = current_site.contact_forms.includes([:campaign, :parent]).where.not({parent_id: nil})
+    if params[:contact_form_id].present?
+      @forms = @forms.where(parent_id: params[:contact_form_id])
+    end
+    if params[:campaign_id].present?
+      @forms = @forms.where(campaign_id: params[:campaign_id])
+    end
+    @forms = @forms.order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => current_site.admin_per_page)
+  end
+
   def del_response
     response = current_site.contact_forms.find_by_id(params[:response_id])
     if response.present? && response.destroy
       flash[:notice] = "#{t('.actions.msg_deleted', default: 'The response has been deleted')}"
     end
-    redirect_to action: :responses
+    redirect_to request.referrer
   end
 
   def manual
 
+  end
+
+  def change_campaign
+  end
+
+  def end_campaign
+  end
+
+  def update_end_campaign
+    @form.update_attributes(form_campaign_params)
+  end
+
+  def save_fields
+    @form.settings = JSON.parse(@form.settings).merge(params[:plugins_contact_form][:value]) {|key, oldval, newval| newval }.to_json
+    @form.save
+    redirect_to action: :show
+  end
+
+  def update_campaign
+    @form.assign_attributes(form_campaign_params)
+    if @form.campaign_id_changed?
+      @form.created_at = Time.zone.now
+    end
+    @form.save
   end
 
   def item_field
@@ -80,5 +126,23 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
       flash[:error] = "Error form class"
       redirect_to cama_admin_path
     end
+  end
+
+  def form_campaign_params
+    params.require(:plugins_cama_contact_form_cama_contact_form).permit(:campaign_id, :campaign_status, :campaign_ended)
+  end
+
+  def form_fields_params
+    # params.require(:plugins_contact_form).permit(:value)
+  end
+
+  # sort column, default is filename
+  def sort_column
+    params[:sort] || "created_at"
+  end
+  
+  # sort direction
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ? params[:direction] : "desc"
   end
 end

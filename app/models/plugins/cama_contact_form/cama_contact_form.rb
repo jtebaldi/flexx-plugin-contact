@@ -2,6 +2,8 @@ class Plugins::CamaContactForm::CamaContactForm < ActiveRecord::Base
   include Plugins::CamaContactForm::MainHelper
   self.table_name = 'plugins_contact_forms'
   belongs_to :site, class_name: "CamaleonCms::Site"
+  belongs_to :campaign, class_name: "Plugins::CamaContactForm::CamaCampaign", foreign_key: :campaign_id
+  belongs_to :parent, class_name: "Plugins::CamaContactForm::CamaContactForm", foreign_key: :parent_id
   # attr_accessible :site_id, :name, :description, :count, :slug, :value, :settings, :parent_id
 
   has_many :responses, :class_name => "Plugins::CamaContactForm::CamaContactForm", :foreign_key => :parent_id, dependent: :destroy
@@ -12,12 +14,20 @@ class Plugins::CamaContactForm::CamaContactForm < ActiveRecord::Base
   before_create :fix_save_settings
   before_destroy :delete_uploaded_files
 
-  default_scope { order(created_at: :desc) }
+  # default_scope { order(created_at: :desc) }
 
   # [{"label":"Untitled","field_type":"text","required":true,"field_options":{"size":"large","field_class":"Default"},"cid":"c2"},{"label":"Untitled","field_type":"paragraph","required":true,"field_options":{"size":"large","field_class":"Default"},"cid":"c6"},{"label":"Untitled","field_type":"captcha","required":true,"field_options":{"field_class":"Default"},"cid":"c10"},{"label":"Untitled","field_type":"checkboxes","required":true,"field_options":{"options":[{"label":"Default","checked":false},{"label":"Default","checked":false}],"field_class":"Default","description":"description\n"},"cid":"c12"}]
   def fields
     @_the_fields ||= JSON.parse(self.value || '{fields: []}').with_indifferent_access
     @_the_fields[:fields]
+  end
+
+  def parent
+    Plugins::CamaContactForm::CamaContactForm.find(parent_id) rescue nil
+  end
+
+  def campaign
+    Plugins::CamaContactForm::CamaCampaign.find(campaign_id) rescue nil
   end
 
   def the_settings
@@ -31,6 +41,15 @@ class Plugins::CamaContactForm::CamaContactForm < ActiveRecord::Base
 
   def self.field_template
     "<div class='form-group'>\n\t <label>[label ci]</label>\n\t<p>[descr ci]</p>\n\t<div>[ci]</div> \n</div>"
+  end
+
+  def self.campaign_status_list
+    {
+      active: "success",
+      completed: "info",
+      cancelled: "warning",
+      unsubscribed: "danger"
+    }
   end
 
   private

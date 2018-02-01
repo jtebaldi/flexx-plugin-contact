@@ -7,7 +7,8 @@
   ],
   "hooks": {
     "admin_before_load": [
-      "contact_form_admin_before_load"
+      "contact_form_admin_before_load",
+      "add_nested_javascript"
     ],
     "on_destroy": [
       "contact_form_on_destroy"

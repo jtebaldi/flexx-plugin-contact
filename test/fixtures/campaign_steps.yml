@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  campaign_id: 
+  time_frame: 1
+  time_select: MyString
+  action_needed: MyString
+  template_id: 
+
+two:
+  campaign_id: 
+  time_frame: 1
+  time_select: MyString
+  action_needed: MyString
+  template_id: 

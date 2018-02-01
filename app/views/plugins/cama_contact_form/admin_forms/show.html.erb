@@ -1,0 +1,44 @@
+<div class="page-content-wrap" id="contact_form_answers">
+  <div class="row">
+    <div class="col-md-12">
+      <!-- START BASIC TABLE SAMPLE -->
+      <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-md-6">
+                    <h3 class="panel-title"><span class="fa fa-archive"></span> <%= t('.lead_record', default: 'Lead Record') %></h3>
+                </div>
+                <div class="col-md-6 text-right">
+                    <a class="btn btn-default" href="<%= url_for action: :leads %>"><%= t('.back_btn', default: 'Back') %></a>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+					<dl>
+						<%= form_for @form, url: save_fields_admin_plugins_cama_contact_form_admin_form_path(@form), method: :put do |f| %>
+							<% @op_fields.each do |default| %>
+								<div class="form-group">
+                  <%= f.label default[:label] %><br>
+                  <% cid = default[:cid].to_sym %>
+								  <% if default[:field_type] == "file" %>
+								      <%# flatten is necessary for backwards compatibility: ["file"].flatten == [["file]].flatten %>
+								      <% [@value[:fields][cid]].flatten.each do |file| %>
+								          <%= link_to file.split('/').last, file, target: '_blank' %><br>
+								      <% end %>
+								  <% elsif default[:field_type] == "radio" || default[:field_type] == "checkboxes" %>
+								      <%= @value[:fields][cid].map { |f| f.to_s.translate }.join(', ') if @value[:fields][cid].present? %></td>
+								  <% else %>
+								      <%#= @value[:fields][cid] %>
+								      <%= text_field_tag "plugins_contact_form[value][fields][#{cid}]", @value[:fields][cid], class: "form-control required" %>
+								  <% end %>
+                </div>
+						  <% end %>
+						  <br/>
+						  <%= f.submit "Save Fields", class: "btn btn-success" %>
+						 <% end %>
+					</dl>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

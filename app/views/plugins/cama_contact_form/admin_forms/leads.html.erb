@@ -1,0 +1,84 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="pull-left">
+                    Leads
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row" style="margin-bottom: 16px">
+            <div class="col-md-9">
+                <%= form_tag admin_plugins_cama_contact_form_leads_path, method: :get, id: "leads_filter_form" do |f| %>
+                  <div class="row">
+                    <div class="col-md-6 col-xs-12">
+                      <div class="field">
+                        <%= label_tag "Filter by Form" %><br />
+                        <%= select_tag :contact_form_id, options_for_select(current_site.contact_forms.where(parent_id: nil).order(:name).pluck(:name, :id), params[:contact_form_id]), include_blank: "all", class: "leads_filter"  %>
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                      <div class="field">
+                        <%= label_tag "Filter by Campaign" %><br />
+                        <%= select_tag :campaign_id, options_for_select(current_site.campaigns.order(:name).collect {|a| [a.name, a.id]}, params[:campaign_id]), include_blank: "all", class: "leads_filter" %>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+            </div>
+            <div class="col-md-3">
+                
+            </div>
+        </div>
+        <table class="table table-responsive table-hover table-striped">
+            <thead>
+              <tr>
+                <th><%= t('.contact_name', default: 'Name') %></th>
+                <th><%= t('.contact_email', default: 'Email') %></th>
+                <th><%= sortable "parents_plugins_contact_forms.name", t('.contact_email', default: 'Contact Form') %></th>
+                <% if can?(:manage, :campaigns) %>
+                  <th><%= sortable "campaigns.name", t('.campaign', default: 'Campaign') %></th>
+                  <th><%= t('.campaign_status', default: 'campaign status') %></th>
+                <% end %>
+                <th><%= sortable "plugins_contact_forms.created_at", t('.created_at', default: 'Initial contact') %></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="contact_form_body">
+            <% @forms.each do |form| %>
+                <% value = (JSON.parse(form.settings).to_sym rescue form.value) %>
+                <tr>
+                  <td data-label=""><%= link_to(contact_name(form, value), { action: :show, id: form.id }) %></td>
+                  <td data-label=""><%= value[:fields][form.parent.fields.select{|f| f[:label].to_s.downcase == "email"}.first[:cid].to_sym] rescue '' %></td>
+                  <td data-label=""><%= form.parent.name rescue ''%></td>
+                  <% if can?(:manage, :campaigns) %>
+                    <td data-label=""><span id="form_campaign_<%= form.id %>"><%= form.campaign.name rescue '' %></span> <%= link_to raw('<i class="fa fa-pencil"></i>'), { action: :change_campaign, id: form.id }, class: "btn btn-xs btn-info", remote: true %></td>
+                    <td data-label="">
+                      <span id="form_campaign_status_<%= form.id %>">
+                        <% if form.campaign_ended %>
+                          <%= render "plugins/cama_contact_form/admin_forms/campaign_status", form: form %>
+                        <% else %>
+                          <%= link_to "Active", { action: :end_campaign, id: form.id }, class: "btn btn-success btn-xs", remote: true %>
+                        <% end %>
+                      </span>
+                    </td>
+                  <% end %>
+                  <td data-label=""><%= form.created_at %></td>
+                  <td data-label="">
+                    <%= link_to raw('<i class="fa fa-eye"></i>'), { action: :show, id: form.id }, class: "btn btn-info btn-xs" %>
+                    <%= link_to raw('<i class="fa fa-trash"></i>'),
+                                { action: :del_response, admin_form_id: form.parent.id, response_id: form.id },
+                                method: :delete, data: { confirm: t('.actions.confirm_delete', default: 'Are you sure?') },
+                                class: 'btn btn-danger btn-xs', title: t('.actions.delete', default: 'Delete') %>
+                  </td>
+                </tr>
+            <% end %>
+            </tbody>
+          </table>
+          <%= content_tag("div", raw("#{t('camaleon_cms.admin.message.data_found_list', default: 'No items found')}"), class: "alert alert-warning") if @forms.empty? %>
+            <%= raw cama_do_pagination(@forms) %>
+    </div>
+    <div id="modal"></div>
+</div>
