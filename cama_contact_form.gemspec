@@ -19,5 +19,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails"
   s.add_dependency 'twilio-ruby', "~> 4.13"
+  s.add_dependency "httparty", "0.15.6"
   s.add_development_dependency "sqlite3"
 end
