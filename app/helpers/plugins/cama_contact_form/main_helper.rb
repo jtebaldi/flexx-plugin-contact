@@ -1,3 +1,5 @@
+require "stripe"
+
 module Plugins::CamaContactForm::MainHelper
   def sortable(column, title = nil)
     title ||= column.titleize
@@ -120,14 +122,14 @@ module Plugins::CamaContactForm::MainHelper
     object.each do |ob|
       ob[:label] = ob[:label].to_s.translate
       ob[:description] = ob[:description].to_s.translate
-      r = {field: ob, form: form, template: (ob[:field_options][:template].present? ? ob[:field_options][:template] :  Plugins::CamaContactForm::CamaContactForm::field_template), custom_class: (ob[:field_options][:field_class] rescue nil), custom_attrs: {id: ob[:cid] }.merge((JSON.parse(ob[:field_options][:field_attributes]) rescue {})) }
+      r = {field: ob, form: form, template: (ob[:field_options].present? && ob[:field_options][:template].present? ? ob[:field_options][:template] :  Plugins::CamaContactForm::CamaContactForm::field_template), custom_class: (ob[:field_options][:field_class] rescue nil), custom_attrs: {id: ob[:cid] }.merge((JSON.parse(ob[:field_options][:field_attributes]) rescue {})) }
       hooks_run("contact_form_item_render", r)
       ob = r[:field]
       ob[:custom_class] = r[:custom_class]
       ob[:custom_attrs] = r[:custom_attrs]
       ob[:custom_attrs][:required] = 'true' if ob[:required].present? && ob[:required].to_bool
       field_options = ob[:field_options]
-      for_name = ob[:label].to_s
+      for_name = ob[:field_type] == 'stripe' ? "" : ob[:label].to_s
       f_name = "fields[#{ob[:cid]}]"
       cid = ob[:cid].to_sym
 
@@ -157,6 +159,63 @@ module Plugins::CamaContactForm::MainHelper
           temp2 = "<input multiple=\"multiple\" type=\"file\" value=\"\" name=\"#{f_name}[]\" #{ob[:custom_attrs].to_attr_format} class=\"#{ob[:custom_class].presence || 'form-control'}\">"
         when 'dropdown'
           temp2 = cama_form_select_multiple_bootstrap(ob, ob[:label], "select",values)
+        when 'stripe'
+          temp2 = <<-EOS
+            <label for="card-element">
+              Credit or debit card
+            </label>
+            <div id="card-element"></div>
+            <div id="card-errors" role="alert"></div>
+            <script src="https://js.stripe.com/v3/"></script>
+            <script>
+              var stripe = Stripe('#{ob[:api_key]}');
+              var elements = stripe.elements();
+              var style = {
+                base: {
+                  fontSize: "14px",
+                  color: "#555",
+                  backgroundColor: "#fff"
+                }
+              };
+
+              var card = elements.create('card', {classes: {base: "form-control"}});
+              card.addEventListener('change', function(event) {
+                var displayError = document.getElementById('card-errors');
+                if (event.error) {
+                  displayError.textContent = event.error.message;
+                } else {
+                  displayError.textContent = '';
+                }
+              });
+
+              card.mount('#card-element');
+
+              var form = document.getElementsByClassName('form__#{form.id}')[0];
+              form.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                stripe.createToken(card).then(function(result) {
+                  if (result.error) {
+                    var errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+                  } else {
+                    stripeTokenHandler(result.token);
+                  }
+                });
+              });
+
+              function stripeTokenHandler(token) {
+                var hiddenInput = document.createElement('input');
+                hiddenInput.setAttribute('type', 'hidden');
+                hiddenInput.setAttribute('name', '#{f_name}');
+                hiddenInput.setAttribute('value', token.id);
+                form.appendChild(hiddenInput);
+
+                // Submit the form
+                form.submit();
+              }
+            </script>
+          EOS
         else
       end
       r[:template] = r[:template].sub('[ci]', temp2)
@@ -200,5 +259,22 @@ module Plugins::CamaContactForm::MainHelper
     else
       html += " </select>"
     end
+  end
+
+  def contact_form_after_submit(args)
+    token_index = args[:form].fields.index {|f| f["field_type"] == "stripe" }
+
+    if token_index
+      Stripe.api_key = args[:form].fields[token_index]["secret_key"]
+      stripe_field_cid = args[:form].fields[token_index]["cid"]
+
+      Stripe::Charge.create(
+        amount: args[:form].fields[token_index]["amount"].to_i,
+        currency: "usd",
+        description: "Flexx",
+        source: args[:values][stripe_field_cid],
+      )
+    end
+  rescue => e #not doing anything at this point
   end
 end

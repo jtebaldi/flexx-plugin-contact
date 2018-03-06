@@ -48,6 +48,7 @@ module Plugins::CamaContactForm::ContactFormControllerConcern
   def validate_to_save_form(form, fields, errors)
     validate = true
     form.fields.each do |f|
+      next if f[:field_type] == 'stripe'
       cid = f[:cid].to_sym
       label = f[:label].to_sym
       case f[:field_type].to_s
@@ -94,6 +95,6 @@ module Plugins::CamaContactForm::ContactFormControllerConcern
   end
 
   def relevant_field?(field)
-    !%w(captcha submit button).include? field[:field_type]
+    !%w(captcha submit button stripe).include? field[:field_type]
   end
 end

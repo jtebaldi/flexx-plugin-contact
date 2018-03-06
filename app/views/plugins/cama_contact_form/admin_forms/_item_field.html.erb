@@ -15,43 +15,59 @@
     </div>
     <div class="panel-body">
         <%= hidden_field_tag "fields[#{cid}][cid]", cid %>
-        <div class="form-group ">
-            <label for=""><%= t('.label') %></label><br>
-            <%= text_field_tag "fields[#{cid}][label]", field[:label], class: 'form-control translatable' %>
-        </div>
-        <% unless ['button', 'submit', 'reset_button'].include?(field[:field_type]) %>
+        <% if field[:field_type] == 'stripe' %>
             <div class="form-group ">
-                <label for=""><%= t('.is_required', default: 'Is Required?') %></label><br>
-                <%= hidden_field_tag "fields[#{cid}][required]", false %>
-                <%= check_box_tag "fields[#{cid}][required]", true, field[:required].to_s.cama_true? %>
+                <label for="">Public API Key</label><br>
+                <%= text_field_tag "fields[#{cid}][api_key]", field[:api_key], class: 'form-control translatable' %>
             </div>
-        <% end %>
-        <div class="form-group ">
-            <label><%= t('.descr', default: 'Description') %></label><br>
-            <%= text_area_tag "fields[#{cid}][field_options][description]", field[:field_options][:description], class: 'form-control translatable' %>
-        </div>
-        <% case field[:field_type] %>
-            <% when 'checkboxes', 'radio', 'select', 'dropdown'; options = (field[:field_options][:options] || []) %>
-                <label><%= t('.options', default: 'Options') %></label>
-                <ul class="options_sortable" data-options-count="<%= options.size %>">
-                    <% options.unshift({label: '', checked: false}).each_with_index do |option, index| %>
-                        <li class="<%= 'hidden' if index == 0 %>">
-                            <div class="actions">
-                                <i class="fa fa-arrows options-sortable" style="cursor: move"></i> <i class="fa fa-times text-danger option-delete" style="cursor: pointer"></i>
-                            </div>
-                            <div class="inputs input-group">
-                                <%= text_field_tag "fields[#{cid}][field_options][options][#{index}][label]", option[:label], class: 'form-control required translatable', placeholder: t('.here_label', default: 'Here your label'), disabled: index == 0 %>
-                                <div class="input-group-addon" style="border: none">
-                                    <label>
-                                        <%= check_box_tag "fields[#{cid}][field_options][options][#{index}][checked]", true, option[:checked].to_s.cama_true?, class: '', disabled: index == 0 %> <%= t('.default', default: 'Default') %>
-                                    </label>
+            <div class="form-group ">
+                <label for="">Secret API Key</label><br>
+                <%= text_field_tag "fields[#{cid}][secret_key]", field[:secret_key], class: 'form-control translatable' %>
+            </div>
+            <div class="form-group ">
+                <label for="">Amount (Ie.: $1.99 = 199)</label><br>
+                <%= text_field_tag "fields[#{cid}][amount]", field[:amount], class: 'form-control translatable' %>
+            </div>
+            <%= hidden_field_tag "fields[#{cid}][label]", "Stripe Token" %>
+            <%= hidden_field_tag "fields[#{cid}][field_options][description]", "" %>
+        <% else %>
+            <div class="form-group ">
+                <label for=""><%= t('.label') %></label><br>
+                <%= text_field_tag "fields[#{cid}][label]", field[:label], class: 'form-control translatable' %>
+            </div>
+            <% unless ['button', 'submit', 'reset_button'].include?(field[:field_type]) %>
+                <div class="form-group ">
+                    <label for=""><%= t('.is_required', default: 'Is Required?') %></label><br>
+                    <%= hidden_field_tag "fields[#{cid}][required]", false %>
+                    <%= check_box_tag "fields[#{cid}][required]", true, field[:required].to_s.cama_true? %>
+                </div>
+            <% end %>
+            <div class="form-group ">
+                <label><%= t('.descr', default: 'Description') %></label><br>
+                <%= text_area_tag "fields[#{cid}][field_options][description]", field[:field_options][:description], class: 'form-control translatable' %>
+            </div>
+            <% case field[:field_type] %>
+                <% when 'checkboxes', 'radio', 'select', 'dropdown'; options = (field[:field_options][:options] || []) %>
+                    <label><%= t('.options', default: 'Options') %></label>
+                    <ul class="options_sortable" data-options-count="<%= options.size %>">
+                        <% options.unshift({label: '', checked: false}).each_with_index do |option, index| %>
+                            <li class="<%= 'hidden' if index == 0 %>">
+                                <div class="actions">
+                                    <i class="fa fa-arrows options-sortable" style="cursor: move"></i> <i class="fa fa-times text-danger option-delete" style="cursor: pointer"></i>
                                 </div>
-                            </div>
-                        </li>
-                    <% end %>
-                </ul>
-                <button type="button" class="btn btn-default btn-xs add_option"><%= t('.add_option', default: 'Add Option') %></button>
-        <% end %>
+                                <div class="inputs input-group">
+                                    <%= text_field_tag "fields[#{cid}][field_options][options][#{index}][label]", option[:label], class: 'form-control required translatable', placeholder: t('.here_label', default: 'Here your label'), disabled: index == 0 %>
+                                    <div class="input-group-addon" style="border: none">
+                                        <label>
+                                            <%= check_box_tag "fields[#{cid}][field_options][options][#{index}][checked]", true, option[:checked].to_s.cama_true?, class: '', disabled: index == 0 %> <%= t('.default', default: 'Default') %>
+                                        </label>
+                                    </div>
+                                </div>
+                            </li>
+                        <% end %>
+                    </ul>
+                    <button type="button" class="btn btn-default btn-xs add_option"><%= t('.add_option', default: 'Add Option') %></button>
+            <% end %>
         <div>
             <a class="btn btn-default btn-xs html_btn"><%= t('.html_code', default: 'HTML Code') %> <i class='fa fa-cog'></i></a>
             <div class="hidden">
@@ -76,5 +92,6 @@
                 </div>
             </div>
         </div>
+        <% end %>
     </div>
 </li>
