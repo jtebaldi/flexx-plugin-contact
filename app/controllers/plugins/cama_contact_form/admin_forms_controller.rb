@@ -28,7 +28,7 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
       settings = {"railscf_mail" => params[:railscf_mail], "railscf_message" => params[:railscf_message], "railscf_form_button" => params[:railscf_form_button], "railscf_campaign" => params[:railscf_campaign]}
       fields = []
       (params[:fields] || {}).each{|k, v|
-        v[:field_options][:options] = v[:field_options][:options].values if v[:field_options][:options].present?
+        v[:field_options][:options] = v[:field_options][:options].values if v[:field_options].present? && v[:field_options][:options].present?
         fields << v
       }
       @form.update({settings: settings.to_json, value: {fields: fields}.to_json})
