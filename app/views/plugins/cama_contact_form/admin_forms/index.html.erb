@@ -1,51 +1,40 @@
-<div class="page-title">
-    <h2><span class="fa fa-archive"></span> <%= t('.title', default: 'Contact Form') %></h2>
-</div>
 <div class="page-content-wrap">
 
     <div class="row">
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading ui-draggable-handle">
-                    <h3 class="panel-title"><%= t('.title_form', default: 'New Contact Form') %></h3>
-                </div>
-                <%= render partial: 'form' %>
-            </div>
-        </div>
-        <div class="col-md-8">
+        <div class="col-xs-12">
 
             <!-- START BASIC TABLE SAMPLE -->
-            <div class="panel panel-default">
-                <div class="panel-heading ui-draggable-handle">
-                    <h3 class="panel-title"><%= t('.list_forms', default: 'Forms List') %></h3>
+            <div class="box box-success">
+                <div class="box-header with-border ui-draggable-handle">
+                    <h3 class="box-title">Contact Forms</h3>
                 </div>
-                <div class="panel-body">
+                <div class="box-body custom-tabe-responsive">
 
                     <table class="table">
                         <thead>
                         <tr>
-                            <th><%= t('.name', default: 'Name') %></th>
-                            <th><%= t('.description', default: 'Description') %></th>
-                            <th><%= t('.slug', default: 'Slug') %></th>
-                            <th><%= t('.shortcode', default: 'Shortcode') %></th>
-                            <th><%= t('.count', default: 'Items') %></th>
-                            <th><%= t('.actions', default: 'Actions') %></th>
+                            <th scope="col"><%= t('.name', default: 'Name') %></th>
+                            <th scope="col"><%= t('.description', default: 'Description') %></th>
+                            <th class="hidden" scope="col"><%= t('.slug', default: 'Slug') %></th>
+                            <th class="hidden" scope="col"><%= t('.shortcode', default: 'Shortcode') %></th>
+                            <th scope="col"><%= t('.count', default: 'Items') %></th>
+                            <th scope="col"></th>
                         </tr>
                         </thead>
-
                         <tbody>
-                        <% @forms.each do |item| %>
+                        <% @forms.each_with_index do |item, index| %>
                             <tr>
-                                <td> <%= item.name %> </td>
-                                <td><%= item.description %></td>
-                                <td><%= item.slug %></td>
-                                <td><%= cama_form_shortcode(item.slug)%></td>
-                                <td><%= item.responses.count %></td>
-                                <td>
-                                    <%= link_to raw("<i class='fa fa-list-alt'></i> "), url_for(action: :responses, admin_form_id: item.id), class: "btn btn-info btn-xs cama_ajax_request", title: "#{t('.list_responses', default: 'Form Items')}" %>
-                                    <%= link_to raw('<i class="fa fa-pencil"></i>'), {action: :edit, id: item.id }, class: "btn btn-default btn-xs cama_ajax_request", title: "#{t('.edit', default: 'Edit Form')}" %>
-                                    <%= link_to raw('<i class="fa fa-times"></i>'), { action: :destroy, id: item.id },method: :delete, data: { confirm: "#{t('.msg_confirm', default: 'Are you sure to delete this form?')}" }, class: "btn btn-danger btn-xs", title: "#{ t('.delete', default: 'Delete Form')}"  %>
-
+                                <td<% 'scope="row"' if index != 0 %> data-label="<%= t('.name', default: 'Name') %>"> <%= item.name %> </td>
+                                <td data-label="<%= t('.description', default: 'Description') %>"><%= item.description.nil? ? '-' : item.description %> </td>
+                                <td data-label="<%= t('.slug', default: 'Slug') %>" class="hidden"><%= item.slug %></td>
+                                <td data-label="<%= t('.shortcode', default: 'Shortcode') %>" class="hidden"><%= cama_form_shortcode(item.slug)%></td>
+                                <td data-label="<%= t('.count', default: 'Items') %>"><%= item.responses.count %></td>
+                                <td data-label="">
+                                    <%= link_to raw("<i class='fa fa-list-alt'></i> View"), url_for(action: :responses, admin_form_id: item.id), class: "btn btn-info btn-block cama_ajax_request", title: "#{t('.list_responses', default: 'Form Items')}" %>
+                                    <% if cama_current_user.the_role == "Administrator" %>
+                                      <%= link_to raw('<i class="fa fa-pencil"></i>'), {action: :edit, id: item.id }, class: "btn btn-default btn-xs cama_ajax_request", title: "#{t('.edit', default: 'Edit Form')}" %>
+                                      <%= link_to raw('<i class="fa fa-times"></i>'), { action: :destroy, id: item.id },method: :delete, data: { confirm: "#{t('.msg_confirm', default: 'Are you sure to delete this form?')}" }, class: "btn btn-danger btn-xs", title: "#{ t('.delete', default: 'Delete Form')}"  %>
+                                    <% end %>
                                 </td>
                             </tr>
                         <% end %>
@@ -59,6 +48,18 @@
             <!-- END BASIC TABLE SAMPLE -->
         </div>
     </div>
+    <% if cama_current_user.the_role == "Administrator" %>
+      <div class="row">
+        <div class="col-md-4">
+              <div class="box box-primary">
+                  <div class="box-header with-border ui-draggable-handle">
+                      <h3 class="box-title"><%= t('.title_form', default: 'New Contact Form') %></h3>
+                  </div>
+                  <%= render partial: 'form' %>
+              </div>
+          </div>
+      </div>
+    <% end %>
 
     <!-- END PAGE CONTENT WRAPPER -->
 </div>

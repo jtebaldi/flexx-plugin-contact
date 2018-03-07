@@ -2,51 +2,41 @@
   <div class="row">
     <div class="col-md-12">
       <!-- START BASIC TABLE SAMPLE -->
-      <div class="panel panel-default">
-        <div class="panel-heading">
-            <div class="row">
-                <div class="col-md-6">
-                    <h3 class="panel-title"><span class="fa fa-archive"></span> <%= t('.list_responses', default: 'List of Items') %></h3>
-                </div>
-                <div class="col-md-6 text-right">
-                    <a class="btn btn-default" href="<%= url_for action: :index %>"><%= t('.back_btn', default: 'Back') %></a>
-                </div>
+      <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Responses</h3>
+            <div class="box-tools pull-right">
+              <a class="btn btn-box-action" href="<%= url_for action: :index %>"><%= t('.back_btn', default: 'Back') %></a>
             </div>
         </div>
-        <div class="panel-body">
-
+        <div class="box-body custom-tabe-responsive">
           <table class="table">
             <thead>
             <tr>
               <% @op_fields.each do |f| %>
-                <th><%= f[:label].to_s.translate %></th>
+                <th scope="col"><%= f[:label].to_s.translate %></th>
               <% end %>
-              <th><%= t('.created_at', default: 'Registered at') %></th>
-              <th></th>
+              <th scope="col"><%= t('.created_at', default: 'Initial contact') %></th>
+              <th scope="col"></th>
             </tr>
             </thead>
-            <tbody>
+            <tbody id="contact_form_body">
             <% @forms.each do |form| %>
                 <% value = (JSON.parse(form.settings).to_sym rescue form.value) %>
                 <tr>
                 <% @op_fields.each do |default| %>
                     <% cid = default[:cid].to_sym %>
                     <% if default[:field_type] == "file" %>
-                        <td>
-                        <%# flatten is necessary for backwards compatibility: ["file"].flatten == [["file]].flatten %>
-                        <% [value[:fields][cid]].flatten.each do |file| %>
-                            <%= link_to file.split('/').last, file, target: '_blank' %><br>
-                        <% end %>
-                        </td>
+                        <td data-label="<%= default[:label].to_s.translate %>"><%= link_to(value[:fields][cid], value[:fields][cid]) %></td>
                     <% elsif default[:field_type] == "radio" || default[:field_type] == "checkboxes" %>
-                        <td><%= value[:fields][cid].map { |f| f.to_s.translate }.join(', ') if value[:fields][cid].present? %></td>
+                        <td data-label="<%= default[:label].to_s.translate %>"><%= value[:fields][cid].map { |f| f.to_s.translate }.join(', ') if value[:fields][cid].present? %></td>
                     <% else %>
-                        <td><%= value[:fields][cid] %></td>
+                        <td data-label="<%= default[:label].to_s.translate %>"><%= value[:fields][cid] %></td>
                     <% end %>
                 <% end %>
-                    <td><%= value[:created_at] %></td>
-                    <td>
-                      <%= link_to raw('<i class="fa fa-times"></i>'),
+                    <td data-label=""><%= value[:created_at] %></td>
+                    <td data-label="">
+                      <%= link_to raw('<span class="text-danger" style="color:#fff">Delete</span>'),
                                   { action: :del_response, response_id: form.id },
                                   method: :delete, data: { confirm: t('.actions.confirm_delete', default: 'Are you sure?') },
                                   class: 'btn btn-danger btn-xs', title: t('.actions.delete', default: 'Delete') %>
@@ -58,6 +48,11 @@
           <%= content_tag("div", raw("#{t('camaleon_cms.admin.message.data_found_list', default: 'No items found')}"), class: "alert alert-warning") if @forms.empty? %>
             <%= raw cama_do_pagination(@forms) %>
         </div>
+        <script>
+          $( document ).ready(function() {
+            $("#contact_form_body tr:not(:first-child) td:first-child").attr("scope","row");
+          })
+        </script>
       </div>
       <!-- END BASIC TABLE SAMPLE -->
     </div>
