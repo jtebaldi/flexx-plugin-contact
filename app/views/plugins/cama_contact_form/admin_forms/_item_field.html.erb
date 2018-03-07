@@ -30,18 +30,20 @@
             </div>
             <%= hidden_field_tag "fields[#{cid}][label]", "Stripe Token" %>
             <%= hidden_field_tag "fields[#{cid}][field_options][description]", "" %>
-        <% elsif field[:field_type] == 'twilio' %>
-            <div class="form-group ">
-                <label for="">Notify via:</label><br>
-                <%= select_tag "fields[#{cid}][t_option]", "<option>text</option>".html_safe, class: 'form-control translatable' %>
-            </div>
-            <div class="form-group">
-                <%= text_field_tag "fields[#{cid}][label]", "twilio", class: 'hidden form-control translatable' %>
-            </div>
         <% else %>
+            <% if field[:field_type] == "twilio" %>
+                <div class="form-group ">
+                    <label for="">Notify via:</label><br>
+                    <%= select_tag "fields[#{cid}][t_option]", "<option>text</option>".html_safe, class: 'form-control translatable' %>
+                </div>
+            <% end %>
             <div class="form-group ">
-                <label for=""><%= t('.label') %></label><br>
-                <%= text_field_tag "fields[#{cid}][label]", field[:label], class: 'form-control translatable' %>
+                <% if field[:field_type] == "twilio" %>
+                    <%= text_field_tag "fields[#{cid}][label]", "twilio", class: 'hidden form-control translatable' %>
+                <% else %>
+                    <label for=""><%= t('.label') %></label><br>
+                    <%= text_field_tag "fields[#{cid}][label]", field[:label], class: 'form-control translatable' %>
+                <% end %>
             </div>
             <% unless ['button', 'submit', 'reset_button'].include?(field[:field_type]) %>
                 <div class="form-group ">
