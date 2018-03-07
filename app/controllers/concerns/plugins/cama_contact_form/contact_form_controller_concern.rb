@@ -101,7 +101,7 @@ module Plugins::CamaContactForm::ContactFormControllerConcern
   end
 
   def relevant_field?(field)
-    !%w(captcha submit button stripe).include? field[:field_type]
+    !%w(captcha submit button stripe twilio).include? field[:field_type]
   end
 
   private
