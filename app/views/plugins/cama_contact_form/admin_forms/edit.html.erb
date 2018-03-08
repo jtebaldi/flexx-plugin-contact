@@ -192,6 +192,10 @@
                     </div>
                 </div>
             </div>
+        <% else %>
+            <div class="hidden">
+                <%= hidden_field_tag "railscf_twilio[enabled]", false %>
+            </div>
         <% end %>
     </div>
 
