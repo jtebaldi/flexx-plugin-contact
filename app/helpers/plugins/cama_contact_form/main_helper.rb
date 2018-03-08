@@ -116,9 +116,6 @@ module Plugins::CamaContactForm::MainHelper
           temp2 = "<input multiple=\"multiple\" type=\"file\" value=\"\" name=\"#{f_name}[]\" #{ob[:custom_attrs].to_attr_format} class=\"#{ob[:custom_class].presence || 'form-control'}\">"
         when 'dropdown'
           temp2 = cama_form_select_multiple_bootstrap(ob, ob[:label], "select",values)
-        when 'twilio'
-          class_type = "hidden"
-          temp2 = "<input #{ob[:custom_attrs].to_attr_format} type=\"text\" value=\"#{ob[:t_option]}\" name=\"#{f_name}\"  class=\"#{ob[:custom_class].presence || 'form-control'} #{class_type}\">"
         when 'stripe'
           temp2 = <<-EOS
             <label for="card-element">

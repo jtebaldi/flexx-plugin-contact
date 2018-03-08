@@ -2,6 +2,7 @@ module Plugins::CamaContactForm::ContactFormControllerConcern
   require 'twilio-ruby'
 
   def perform_save_form(form, fields, success, errors)
+    @the_form = form
     attachments = []
     if validate_to_save_form(form, fields, errors)
       form.fields.each do |f|
@@ -32,10 +33,10 @@ module Plugins::CamaContactForm::ContactFormControllerConcern
         content = render_to_string(partial: plugin_view('contact_form/email_content'), layout: false, formats: ['html'], locals: {file_attachments: attachments, fields: fields_data, values: fields, message_body: message_body, form: form})
         cama_send_email(form.the_settings[:railscf_mail][:to], form.the_settings[:railscf_mail][:subject].to_s.translate.cama_replace_codes(fields), {attachments: attachments, content: content, extra_data: {fields: fields_data}})
 
-        if fields_data.has_key?("twilio")
-            opts = fields_data.fetch("twilio").first
-            lead_data = fields_data.except("twilio")
-            send_message(opts, lead_data)
+        if form.the_settings[:railscf_twilio][:enabled] == "true"
+          # byebug
+          lead_data = fields_data
+          send_message(lead_data)
         end
 
         success << form.the_message('mail_sent_ok', t('.success_form_val', default: 'Your message has been sent successfully. Thank you very much!'))
@@ -106,26 +107,26 @@ module Plugins::CamaContactForm::ContactFormControllerConcern
 
   private
   
-  def send_message(opts, lead)
+  def send_message(lead)
     twilio_sid = ENV['TWILIO_SID']
     twilio_token = ENV['TWILIO_TOKEN']
     @client = Twilio::REST::Client.new(twilio_sid, twilio_token)
      
     to_phones = []
-    to_phones << "+1" + current_site.get_field("twilio_default-number")
+    phone = @the_form.the_settings[:railscf_twilio][:phone].presence || current_site.get_field("twilio_default-number")
+    to_phones << "+1#{phone}"
     
     @twilio_number = ENV['TWILIO_FROM_NUMBER']
     
-    if opts == "text"
-        to_phones.each do |agent|
-            message = @client.account.messages.create(
-              from:  @twilio_number,
-              to:    agent,
-              body:  "New lead!\n" + lead.map{ |k,v| "#{k}: #{v.first}\n" }.join('')
-            )
-            
-            puts message.to
-        end
+    to_phones.each do |agent|
+      message = @client.account.messages.create(
+        from:  @twilio_number,
+        to:    agent,
+        body:  "New lead!\n" + lead.map{ |k,v| "#{k}: #{v.first}\n" }.join('')
+      )
+      
+      puts message.to
     end
+    
   end
 end

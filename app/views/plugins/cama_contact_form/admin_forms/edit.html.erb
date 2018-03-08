@@ -170,6 +170,29 @@
                 </div>
             </div>
         </div>
+        <% if current_site.get_field("twilio_default-number").present? %>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Text Notification</h3>
+                    <ul class="panel-controls">
+                        <li><a href="#" class="panel-collapse"><span class="fa fa-angle-down"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <div class="">
+                        <div class="form-group">
+                            <%= hidden_field_tag "railscf_twilio[enabled]", false %>
+                            <%= check_box_tag "railscf_twilio[enabled]", true, (@form.the_settings[:railscf_twilio][:enabled] == "true" rescue false), id: "railscf_twilio_enabled_check" %>
+                            <label for="railscf_twilio_enabled_check">Send text notification?</label>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone number:</label><br>
+                            <input class="form-control" type="text" name="railscf_twilio[phone]" value="<%= @form.the_settings[:railscf_twilio][:phone] rescue '' %>" placeholder="5555555555" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% end %>
     </div>
 
     <div class="col-md-5">
@@ -203,9 +226,6 @@
                 <a class="btn btn-default" data-field-type="button" ><span class="fa fa-button"></span> <%= t('.fields.button', default: 'Simple Button') %></a>
                 <a class="btn btn-default" data-field-type="reset_button" ><span class="fa fa-button"></span> <%= t('.fields.reset_button', default: 'Reset Button') %></a>
                 <a class="btn btn-default" data-field-type="stripe" ><span class="fa fa-button"></span> <%= t('.fields.stripe', default: 'Stripe') %></a>
-                <% if current_site.get_field("twilio_enabled").present? %>
-                    <a class="btn btn-default" data-field-type="twilio" ><span class="fa fa-mobile"></span> Twilio</a>
-                <% end %>
             </div>
         </div>
     </div>
