@@ -170,7 +170,7 @@
                 </div>
             </div>
         </div>
-        <div class="panel panel-default <% 'hidden' unless current_site.get_field('twilio_default-number').present? %>">
+        <div class="panel panel-default <%= 'hidden' unless current_site.get_field('twilio_default-number').present? %>">
             <div class="panel-heading">
                 <h3 class="panel-title">Text Notification</h3>
                 <ul class="panel-controls">
