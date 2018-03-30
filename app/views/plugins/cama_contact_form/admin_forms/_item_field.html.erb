@@ -54,7 +54,7 @@
                 <%= text_area_tag "fields[#{cid}][field_options][description]", field[:field_options][:description], class: 'form-control translatable' %>
             </div>
             <% case field[:field_type] %>
-                <% when 'checkboxes', 'radio', 'select', 'dropdown'; options = (field[:field_options][:options] || []) %>
+                <% when 'checkboxes', 'radio', 'select', 'dropdown', 'stripe_dropdown'; options = (field[:field_options][:options] || []) %>
                     <label><%= t('.options', default: 'Options') %></label>
                     <ul class="options_sortable" data-options-count="<%= options.size %>">
                         <% options.unshift({label: '', checked: false}).each_with_index do |option, index| %>
@@ -64,6 +64,9 @@
                                 </div>
                                 <div class="inputs input-group">
                                     <%= text_field_tag "fields[#{cid}][field_options][options][#{index}][label]", option[:label], class: 'form-control required translatable', placeholder: t('.here_label', default: 'Here your label'), disabled: index == 0 %>
+                                    <% if field[:field_type] == "stripe_dropdown" %>
+                                        <%= text_field_tag "fields[#{cid}][field_options][options][#{index}][value]", option[:value], class: 'form-control required translatable', placeholder: t('.here_label', default: 'Here your value'), disabled: index == 0 %>
+                                    <% end %>
                                     <div class="input-group-addon" style="border: none">
                                         <label>
                                             <%= check_box_tag "fields[#{cid}][field_options][options][#{index}][checked]", true, option[:checked].to_s.cama_true?, class: '', disabled: index == 0 %> <%= t('.default', default: 'Default') %>
@@ -92,7 +95,7 @@
                 <div class="form-group">
                     <%= label_tag nil, t('.template', default: 'Template') %>
                     <%= text_area_tag "fields[#{cid}][field_options][template]", field[:field_options][:template], class: 'form-control', rows: 6, placeholder: Plugins::CamaContactForm::CamaContactForm::field_template %>
-                </div>                   
+                </div>
                 <div class="form-group">
                     <%= label_tag nil, t('.attributes', default: 'Field Attributes') %>
                     <%= text_field_tag "fields[#{cid}][field_options][field_attributes]", field[:field_options][:field_attributes], class: 'form-control', placeholder: '{"style": "color: red;", "data-my-attr": "xx"}' %>
