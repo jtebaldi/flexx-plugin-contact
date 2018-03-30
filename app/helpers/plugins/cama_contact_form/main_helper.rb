@@ -114,8 +114,8 @@ module Plugins::CamaContactForm::MainHelper
           temp2 = cama_captcha_tag(5, {}, {class: "#{ob[:custom_class].presence || 'form-control'} field-captcha required"}.merge(ob[:custom_attrs]))
         when 'file'
           temp2 = "<input multiple=\"multiple\" type=\"file\" value=\"\" name=\"#{f_name}[]\" #{ob[:custom_attrs].to_attr_format} class=\"#{ob[:custom_class].presence || 'form-control'}\">"
-        when 'dropdown'
-          temp2 = cama_form_select_multiple_bootstrap(ob, ob[:label], "select",values)
+        when 'dropdown', 'stripe_dropdown'
+          temp2 = cama_form_select_multiple_bootstrap(ob, ob[:label], "select", values)
         when 'stripe'
           temp2 = <<-EOS
             <label for="card-element">
@@ -207,7 +207,7 @@ module Plugins::CamaContactForm::MainHelper
                     </label>
                   </div>"
       else
-        html += "<option  value=\"#{label.downcase.gsub(" ", "_")}\" #{"selected" if "#{label.downcase.gsub(" ", "_")}" == values[cid] || op[:checked].to_s.cama_true? } >#{label}</option>"
+        html += "<option  value=\"#{op[:value]}\" #{"selected" if "#{label.downcase.gsub(" ", "_")}" == values[cid] || op[:checked].to_s.cama_true? } >#{label}</option>"
       end
     end
 
@@ -225,8 +225,17 @@ module Plugins::CamaContactForm::MainHelper
       Stripe.api_key = args[:form].fields[token_index]["secret_key"]
       stripe_field_cid = args[:form].fields[token_index]["cid"]
 
+      amount = args[:form].fields[token_index]["amount"].to_i
+
+      args[:form].fields.each do |f|
+        if f["field_type"] == "stripe_dropdown"
+          cid = f["cid"]
+          amount = amount + args[:values][cid].to_i
+        end
+      end
+
       Stripe::Charge.create(
-        amount: args[:form].fields[token_index]["amount"].to_i,
+        amount: amount,
         currency: "usd",
         description: "Flexx",
         source: args[:values][stripe_field_cid],
