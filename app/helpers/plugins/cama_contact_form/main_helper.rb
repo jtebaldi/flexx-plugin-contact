@@ -226,20 +226,41 @@ module Plugins::CamaContactForm::MainHelper
       stripe_field_cid = args[:form].fields[token_index]["cid"]
 
       amount = args[:form].fields[token_index]["amount"].to_i
+      email = ''
 
       args[:form].fields.each do |f|
-        if f["field_type"] == "stripe_dropdown"
+
+        case f["field_type"]
+        when "stripe_dropdown"
           cid = f["cid"]
           amount = amount + args[:values][cid].to_i
+        when "email"
+          cid = f["cid"]
+          email = args[:values][cid]
         end
       end
 
-      Stripe::Charge.create(
-        amount: amount,
-        currency: "usd",
-        description: "Flexx",
-        source: args[:values][stripe_field_cid],
-      )
+      if email.present?
+        customer = Stripe::Customer.create(
+          email: email,
+          source: args[:values][stripe_field_cid]
+        )
+
+        Stripe::Charge.create(
+          amount: amount,
+          currency: "usd",
+          description: "Flexx",
+          source: customer.default_source,
+          customer: customer.id
+        )
+      else
+        Stripe::Charge.create(
+          amount: amount,
+          currency: "usd",
+          description: "Flexx",
+          source: args[:values][stripe_field_cid]
+        )
+      end
     end
   rescue => e #not doing anything at this point
   end
