@@ -106,27 +106,27 @@ module Plugins::CamaContactForm::ContactFormControllerConcern
   end
 
   private
-  
+
   def send_message(lead)
     twilio_sid = ENV['TWILIO_SID']
     twilio_token = ENV['TWILIO_TOKEN']
     @client = Twilio::REST::Client.new(twilio_sid, twilio_token)
-     
+
     to_phones = []
     phone = @the_form.the_settings[:railscf_twilio][:phone].presence || current_site.get_field("twilio_default-number")
     to_phones << "+1#{phone}"
-    
+
     @twilio_number = ENV['TWILIO_FROM_NUMBER']
-    
+
     to_phones.each do |agent|
-      message = @client.account.messages.create(
+      message = @client.messages.create(
         from:  @twilio_number,
         to:    agent,
         body:  "New lead!\n" + lead.map{ |k,v| "#{k}: #{v.first}\n" }.join('')
       )
-      
+
       puts message.to
     end
-    
+
   end
 end
