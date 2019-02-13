@@ -191,6 +191,27 @@
                 </div>
             </div>
         </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Webhook</h3>
+                <ul class="panel-controls">
+                    <li><a href="#" class="panel-collapse"><span class="fa fa-angle-down"></span></a></li>
+                </ul>
+            </div>
+            <div class="panel-body">
+                <div class="">
+                    <div class="form-group">
+                        <%= hidden_field_tag "railscf_webhook[enabled]", false %>
+                        <%= check_box_tag "railscf_webhook[enabled]", true, (@form.the_settings[:railscf_webhook][:enabled] == "true" rescue false), id: "railscf_webhook_enabled_check" %>
+                        <label for="railscf_webhook_enabled_check">Enable webhook?</label>
+                    </div>
+                    <div class="form-group">
+                        <label>Url:</label><br>
+                        <input class="form-control" type="text" name="railscf_webhook[url]" value="<%= @form.the_settings[:railscf_webhook][:url] rescue '' %>" placeholder="https://" />
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="col-md-5">
