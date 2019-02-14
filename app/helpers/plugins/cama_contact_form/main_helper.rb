@@ -1,4 +1,5 @@
 require "stripe"
+require "httparty"
 
 module Plugins::CamaContactForm::MainHelper
   def self.included(klass)
@@ -219,6 +220,8 @@ module Plugins::CamaContactForm::MainHelper
   end
 
   def contact_form_after_submit(args)
+    call_webhook(args) if webhook_enabled?(args[:form])
+
     token_index = args[:form].fields.index {|f| f["field_type"] == "stripe" }
 
     if token_index
@@ -242,5 +245,30 @@ module Plugins::CamaContactForm::MainHelper
       )
     end
   rescue => e #not doing anything at this point
+  end
+
+  private
+
+  def call_webhook(args)
+    fields = args[:form].fields.select{ |f| ["text", "paragraph", "checkboxes", "radio", "dropdown", "website", "email"].include?(f["field_type"]) }
+    values = args[:values]
+
+    payload = Hash.new.tap do |payload|
+      fields.each do |f|
+        payload[f["label"]] = values[f["cid"]]
+      end
+    end
+
+    ::HTTParty.post(webhook_settings(args[:form])["url"], body: payload)
+  end
+
+  def webhook_enabled?(form)
+    webhook_settings(form)["enabled"].present?
+  end
+
+  def webhook_settings(form)
+    settings = JSON.parse(form.settings)
+
+    settings["railscf_webhook"] || {}
   end
 end
