@@ -40,7 +40,7 @@ module Plugins::CamaContactForm::ContactFormControllerConcern
         end
 
         success << form.the_message('mail_sent_ok', t('.success_form_val', default: 'Your message has been sent successfully. Thank you very much!'))
-        args = {form: form, values: fields}; hooks_run("contact_form_after_submit", args)
+        args = {form: form, values: fields, form_received: form_new}; hooks_run("contact_form_after_submit", args)
         if form.the_settings[:railscf_mail][:to_answer].present? && (answer_to = fields[form.the_settings[:railscf_mail][:to_answer].gsub(/(\[|\])/, '').to_sym]).present?
           content = form.the_settings[:railscf_mail][:body_answer].to_s.translate.cama_replace_codes(fields)
           cama_send_email(answer_to, form.the_settings[:railscf_mail][:subject_answer].to_s.translate.cama_replace_codes(fields), {content: content})
