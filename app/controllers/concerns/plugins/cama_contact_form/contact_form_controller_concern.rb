@@ -31,10 +31,16 @@ module Plugins::CamaContactForm::ContactFormControllerConcern
         fields_data = convert_form_values(form, fields)
         message_body = form.the_settings[:railscf_mail][:body].to_s.translate.cama_replace_codes(fields)
         content = render_to_string(partial: plugin_view('contact_form/email_content'), layout: false, formats: ['html'], locals: {file_attachments: attachments, fields: fields_data, values: fields, message_body: message_body, form: form})
-        cama_send_email(form.the_settings[:railscf_mail][:to], form.the_settings[:railscf_mail][:subject].to_s.translate.cama_replace_codes(fields), {attachments: attachments, content: content, extra_data: {fields: fields_data}})
+
+        recipients = form.the_settings[:railscf_mail][:to]
+        if fields_data["cc-email"].present?
+          recipients = "#{recipients},#{fields_data["cc-email"].join(',')}"
+          fields_data.delete("cc-email")
+        end
+
+        cama_send_email(recipients, form.the_settings[:railscf_mail][:subject].to_s.translate.cama_replace_codes(fields), {attachments: attachments, content: content, extra_data: {fields: fields_data}})
 
         if form.the_settings[:railscf_twilio][:enabled] == "true"
-          # byebug
           lead_data = fields_data
           send_message(lead_data)
         end

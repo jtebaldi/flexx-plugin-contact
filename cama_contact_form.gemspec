@@ -1,12 +1,6 @@
-$:.push File.expand_path("../lib", __FILE__)
-
-# Maintain your gem's version:
-require "cama_contact_form/version"
-
-# Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
   s.name        = "cama_contact_form"
-  s.version     = CamaContactForm::VERSION
+  s.version     = "0.0.23"
   s.authors     = ["Owen Peredo"]
   s.email       = ["owenperedo@gmail.com"]
   s.homepage    = ""
