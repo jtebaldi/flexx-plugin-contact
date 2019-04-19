@@ -16,13 +16,25 @@ class Plugins::CamaContactForm::AdminFormsController < CamaleonCms::Apps::Plugin
 
   def update
     if @form.update(params.require(:plugins_cama_contact_form_cama_contact_form).permit(:name, :slug))
-      settings = {"railscf_mail" => params[:railscf_mail], "railscf_message" => params[:railscf_message], "railscf_form_button" => params[:railscf_form_button], "railscf_redirect" => params[:railscf_redirect], "railscf_twilio" => params[:railscf_twilio], "railscf_webhook" => params[:railscf_webhook]}
+      settings = @form.settings.present? ? JSON.parse(@form.settings) : {}
+
+      settings.merge!({
+        "railscf_mail" => params[:railscf_mail],
+        "railscf_message" => params[:railscf_message],
+        "railscf_form_button" => params[:railscf_form_button],
+        "railscf_redirect" => params[:railscf_redirect],
+        "railscf_twilio" => params[:railscf_twilio],
+        "railscf_webhook" => params[:railscf_webhook]
+      }) { |k, o, n| n.presence || o }
+
       fields = []
-      (params[:fields] || {}).each{|k, v|
+      (params[:fields] || {}).each do |k, v|
         v[:field_options][:options] = v[:field_options][:options].values if v[:field_options].present? && v[:field_options][:options].present?
         fields << v
-      }
-      @form.update({settings: settings.to_json, value: {fields: fields}.to_json})
+      end
+
+      @form.update({ settings: settings.to_json, value: { fields: fields }.to_json })
+
       flash[:notice] = t('.updated_success', default: 'Updated successfully')
       redirect_to action: :edit, id: @form.id
     else
