@@ -25,7 +25,8 @@ class Plugins::CamaContactForm::FrontController < CamaleonCms::Apps::PluginsFron
     respond_to do |format|
       format.html do
         if @form.the_settings[:railscf_redirect][:enabled] == "true" && @form.the_settings[:railscf_redirect][:url].present?
-          redirect_to @form.the_settings[:railscf_redirect][:url]
+          redirect_url = @form.the_settings[:railscf_redirect][:url].cama_replace_codes(fields)
+          redirect_to redirect_url
         else
           redirect_to request.referrer
         end
